@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
+const yaml = require('js-yaml');
 
 // PostgreSQL connection pool
 const pool = new Pool({
@@ -48,7 +49,7 @@ app.get('/api/packages', async (req, res) => {
     const packages = result.rows.map(row => ({
       id: row.id,
       package_name: row.package_name,
-      items: row.items,
+      items: yaml.load(row.items) || [],
       price: row.price,
       image_data: row.image_data ? row.image_data.toString('base64') : null,
     }));
