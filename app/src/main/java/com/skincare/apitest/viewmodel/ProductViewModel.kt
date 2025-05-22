@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.asStateFlow
 import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.repository.CartRepository
-import com.skincare.apitest.model.CartItem
+import com.skincare.apitest.repository.CartItem
 
 class ProductViewModel : ViewModel() {
     private val repository = ProductRepository()
