@@ -123,13 +123,19 @@ const resolvers = {
     packages: async () => {
       try {
         const result = await pool.query('SELECT id, package_name, items, price, image_data FROM package_products');
-        return result.rows.map(row => ({
-          id: row.id,
-          packageName: row.package_name,
-          items: yaml.load(row.items) || [],
-          price: row.price,
-          image: row.image_data ? row.image_data.toString('base64') : null,
-        }));
+        return result.rows.map(row => {
+          let items = yaml.load(row.items);
+          if (!Array.isArray(items)) {
+            items = items ? [items] : [];
+          }
+          return {
+            id: row.id,
+            packageName: row.package_name,
+            items: items,
+            price: row.price,
+            image: row.image_data ? row.image_data.toString('base64') : null,
+          };
+        });
       } catch (error) {
         console.error('Error fetching packages:', error);
         throw new Error('Failed to fetch packages');
