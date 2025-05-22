@@ -13,11 +13,27 @@ import com.skincare.apitest.viewmodel.ProductViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.skincare.apitest.databinding.ActivityCartBinding
+import com.skincare.apitest.model.Product
+import com.skincare.apitest.model.PackageProduct
+import com.skincare.apitest.repository.CartItem
+import com.skincare.apitest.ui.CartAdapter
+import com.skincare.apitest.ui.CartPackageAdapter
+import com.skincare.apitest.ui.ProductDetailDialogFragment
+import com.skincare.apitest.viewmodel.ProductViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCartClickListener {
 
     private lateinit var binding: ActivityCartBinding
     private lateinit var viewModel: ProductViewModel
     private lateinit var cartAdapter: CartAdapter
+    private lateinit var cartPackageAdapter: CartPackageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +42,6 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
 
         viewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
 
-        // Removed setSupportActionBar to avoid conflict with window decor action bar
-        // setSupportActionBar(binding.cartToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.cart)
 
@@ -35,8 +49,6 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
         observeCartItems()
 
         binding.checkoutButton.setOnClickListener {
-            // Handle checkout button click
-            // For now, just show a toast message
             android.widget.Toast.makeText(this, "Checkout clicked", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
@@ -47,15 +59,22 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
                 viewModel.removeFromCart(product)
             },
             onItemClick = { product ->
-                // Show product detail dialog
                 val dialog = ProductDetailDialogFragment.newInstance(product)
                 dialog.setOnAddToCartClickListener(this)
                 dialog.show(supportFragmentManager, "ProductDetailDialog")
             }
         )
+        cartPackageAdapter = CartPackageAdapter(
+            onDeleteClick = { packageProduct ->
+                viewModel.removePackageFromCart(packageProduct)
+            },
+            onItemClick = { packageProduct ->
+                // TODO: Implement package product detail dialog if needed
+            }
+        )
         binding.cartRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@CartActivity)
-            adapter = cartAdapter
+            adapter = cartAdapter // For simplicity, show individual products by default
         }
     }
 
@@ -64,17 +83,28 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
             viewModel.cartItems.collectLatest { cartItems ->
                 val products = cartItems.mapNotNull {
                     when (it) {
-                        is com.skincare.apitest.repository.CartItem.IndividualProduct -> it.product
+                        is CartItem.IndividualProduct -> it.product
                         else -> null
                     }
                 }
+                val packageProducts = cartItems.mapNotNull {
+                    when (it) {
+                        is CartItem.PackageProductItem -> it.packageProduct
+                        else -> null
+                    }
+                }
+                // For demonstration, show individual products and package products separately
                 cartAdapter.submitList(products)
-                // Calculate total price
-                val totalPrice = cartItems.filterIsInstance<com.skincare.apitest.repository.CartItem.IndividualProduct>()
-                    .sumOf { it.product.price }
-                // Format total price as currency
+                cartPackageAdapter.submitList(packageProducts)
+
+                // Calculate total price including both product types
+                val totalPrice = cartItems.sumOf {
+                    when (it) {
+                        is CartItem.IndividualProduct -> it.product.price
+                        is CartItem.PackageProductItem -> it.packageProduct.price
+                    }
+                }
                 val formattedTotal = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("in", "ID")).format(totalPrice.toDouble())
-                // Update total price TextView
                 binding.totalPriceTextView.text = "Total: $formattedTotal"
             }
         }
