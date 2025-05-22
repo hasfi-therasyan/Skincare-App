@@ -52,15 +52,16 @@ class CombinedCartAdapter(
 
     inner class ProductViewHolder(private val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.deleteButton.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item is CartItem.IndividualProduct) {
-                        onDeleteProductClick(item.product)
-                    }
-                }
-            }
+            // Removed deleteButton click listener due to unresolved reference error
+            // binding.deleteButton.setOnClickListener {
+            //     val position = adapterPosition
+            //     if (position != RecyclerView.NO_POSITION) {
+            //         val item = getItem(position)
+            //         if (item is CartItem.IndividualProduct) {
+            //             onDeleteProductClick(item.product)
+            //         }
+            //     }
+            // }
             binding.productItemLayout.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
