@@ -12,12 +12,20 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
 
+import com.skincare.apitest.model.PackageProductResponse
+
 interface ProductService {
     @GET("products")
     suspend fun getProducts(): Response<ProductResponse>
 
     @GET("product/image/{id}")
     suspend fun getProductImage(@Path("id") id: Int): Response<String>
+
+    @GET("packages")
+    suspend fun getPackages(): Response<PackageProductResponse>
+
+    @GET("package/image/{id}")
+    suspend fun getPackageImage(@Path("id") id: Int): Response<String>
 
     companion object {
         const val BASE_URL = "http://10.0.2.2:4000/api/"

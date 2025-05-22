@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.asStateFlow
+import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.repository.CartRepository
 
 class ProductViewModel : ViewModel() {
@@ -17,6 +18,9 @@ class ProductViewModel : ViewModel() {
 
     private val _productsState = MutableStateFlow<ApiResponse<List<Product>>>(ApiResponse.Loading)
     val productsState: StateFlow<ApiResponse<List<Product>>> = _productsState
+
+    private val _packageProductsState = MutableStateFlow<ApiResponse<List<PackageProduct>>>(ApiResponse.Loading)
+    val packageProductsState: StateFlow<ApiResponse<List<PackageProduct>>> = _packageProductsState
 
     private val _selectedApiType = MutableStateFlow(ApiType.RETROFIT)
     val selectedApiType: StateFlow<ApiType> = _selectedApiType
@@ -41,6 +45,14 @@ class ProductViewModel : ViewModel() {
         }
     }
 
+    fun fetchPackages() {
+        viewModelScope.launch {
+            repository.getPackages(_selectedApiType.value).collect { response ->
+                _packageProductsState.value = response
+            }
+        }
+    }
+
     fun fetchProductImage(productId: Int) {
         viewModelScope.launch {
             repository.getProductImage(productId, _selectedApiType.value).collect { response ->
@@ -55,6 +67,10 @@ class ProductViewModel : ViewModel() {
 
     fun addToCart(product: Product) {
         CartRepository.addToCart(product)
+    }
+
+    fun addPackageToCart(packageProduct: PackageProduct) {
+        CartRepository.addPackageToCart(packageProduct)
     }
 
     fun removeFromCart(product: Product) {
