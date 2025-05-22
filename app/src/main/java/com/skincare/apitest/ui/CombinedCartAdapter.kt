@@ -118,23 +118,23 @@ class CombinedCartAdapter(
             }
         }
 
-        fun bind(packageProduct: PackageProduct) {
-            binding.apply {
-                packageNameTextView.text = packageProduct.packageName
-                packageItemsTextView.text = packageProduct.items.joinToString(", ")
-                packagePriceTextView.text = packageProduct.getFormattedPrice()
+                fun bind(packageProduct: PackageProduct) {
+                    binding.apply {
+                        packageNameTextView.text = packageProduct.packageName
+                        packageItemsTextView.text = packageProduct.items.joinToString(", ")
+                        packagePriceTextView.text = packageProduct.getFormattedPrice()
 
-                packageProduct.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
-                    Glide.with(packageImageView)
-                        .load(base64Image)
-                        .centerCrop()
-                        .into(packageImageView)
+                        packageProduct.imageData?.let { imageData ->
+                            val base64Image = "data:image/png;base64,$imageData"
+                            Glide.with(packageImageView)
+                                .load(base64Image)
+                                .centerCrop()
+                                .into(packageImageView)
+                        }
+
+                        // deleteButton.visibility = android.view.View.VISIBLE
+                    }
                 }
-
-                deleteButton.visibility = android.view.View.VISIBLE
-            }
-        }
     }
 
     private class CartItemDiffCallback : DiffUtil.ItemCallback<CartItem>() {
