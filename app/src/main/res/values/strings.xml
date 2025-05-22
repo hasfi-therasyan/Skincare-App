@@ -25,4 +25,5 @@
     <string name="add_to_cart">Add to Cart</string>
     <string name="cart">Cart</string>
     <string name="delete">delete</string>
+    <string name="package_image">package_image\n</string>
 </resources>
