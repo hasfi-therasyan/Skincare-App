@@ -12,21 +12,9 @@ import com.skincare.apitest.ui.ProductDetailDialogFragment
 import com.skincare.apitest.viewmodel.ProductViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.skincare.apitest.databinding.ActivityCartBinding
-import com.skincare.apitest.model.Product
-import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.repository.CartItem
-import com.skincare.apitest.ui.CartAdapter
 import com.skincare.apitest.ui.CartPackageAdapter
-import com.skincare.apitest.ui.ProductDetailDialogFragment
-import com.skincare.apitest.viewmodel.ProductViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+
 
 class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCartClickListener {
 
