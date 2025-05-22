@@ -61,10 +61,11 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
 
     private fun observeCartItems() {
         lifecycleScope.launch {
-            viewModel.cartItems.collectLatest { items ->
-                cartAdapter.submitList(items)
+            viewModel.cartItems.collectLatest { cartItems ->
+                val products = cartItems.map { it.product }
+                cartAdapter.submitList(products)
                 // Calculate total price
-                val totalPrice = items.sumOf { it.price }
+                val totalPrice = cartItems.sumOf { it.product.price }
                 // Format total price as currency
                 val formattedTotal = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("in", "ID")).format(totalPrice)
                 // Update total price TextView
