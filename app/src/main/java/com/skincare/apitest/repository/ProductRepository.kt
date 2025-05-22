@@ -3,6 +3,8 @@ package com.skincare.apitest.repository
 import com.apollographql.apollo3.exception.ApolloException
 import com.skincare.apitest.GetProductImageQuery
 import com.skincare.apitest.GetProductsQuery
+import com.skincare.apitest.GetPackagesQuery
+import com.skincare.apitest.GetPackageImageQuery
 import com.skincare.apitest.model.ApiResponse
 import com.skincare.apitest.model.ApiType
 import com.skincare.apitest.model.PackageProduct

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.asStateFlow
 import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.repository.CartRepository
+import com.skincare.apitest.model.CartItem
 
 class ProductViewModel : ViewModel() {
     private val repository = ProductRepository()
@@ -29,7 +30,7 @@ class ProductViewModel : ViewModel() {
     val currentImageState: StateFlow<ApiResponse<String>?> = _currentImageState
 
     // Cart state from shared repository
-    val cartItems: StateFlow<List<Product>> = CartRepository.cartItems
+    val cartItems: StateFlow<List<CartItem>> = CartRepository.cartItems
 
     val cartItemCount: StateFlow<Int> = CartRepository.cartItemCount
 
