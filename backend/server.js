@@ -49,7 +49,7 @@ app.get('/api/packages', async (req, res) => {
     const packages = result.rows.map(row => ({
       id: row.id,
       package_name: row.package_name,
-      items: yaml.load(row.items) || [],
+      items: JSON.parse(JSON.stringify(yaml.load(row.items) || [])),
       price: row.price,
       image_data: row.image_data ? row.image_data.toString('base64') : null,
     }));
