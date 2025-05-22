@@ -52,16 +52,16 @@ class CombinedCartAdapter(
 
     inner class ProductViewHolder(private val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            // Removed deleteButton click listener due to unresolved reference error
-            // binding.deleteButton.setOnClickListener {
-            //     val position = adapterPosition
-            //     if (position != RecyclerView.NO_POSITION) {
-            //         val item = getItem(position)
-            //         if (item is CartItem.IndividualProduct) {
-            //             onDeleteProductClick(item.product)
-            //         }
-            //     }
-            // }
+            binding.deleteButton.visibility = android.view.View.VISIBLE
+            binding.deleteButton.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item is CartItem.IndividualProduct) {
+                        onDeleteProductClick(item.product)
+                    }
+                }
+            }
             binding.productItemLayout.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -97,6 +97,16 @@ class CombinedCartAdapter(
         init {
             binding.cartButton.visibility = android.view.View.GONE
             binding.cartButton.isEnabled = false
+            binding.deleteButton.visibility = android.view.View.VISIBLE
+            binding.deleteButton.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item is CartItem.PackageProductItem) {
+                        onDeletePackageClick(item.packageProduct)
+                    }
+                }
+            }
 
             binding.root.setOnClickListener {
                 val position = adapterPosition
@@ -107,17 +117,6 @@ class CombinedCartAdapter(
                     }
                 }
             }
-
-            // Removed deleteButton click listener due to unresolved reference error
-            // binding.deleteButton.setOnClickListener {
-            //     val position = adapterPosition
-            //     if (position != RecyclerView.NO_POSITION) {
-            //         val item = getItem(position)
-            //         if (item is CartItem.PackageProductItem) {
-            //             onDeletePackageClick(item.packageProduct)
-            //         }
-            //     }
-            // }
         }
 
                 fun bind(packageProduct: PackageProduct) {
