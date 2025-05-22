@@ -42,48 +42,33 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
     }
 
     private fun setupRecyclerView() {
-        cartAdapter = CartAdapter(
-            onDeleteClick = { product ->
+        val combinedCartAdapter = CombinedCartAdapter(
+            onDeleteProductClick = { product ->
                 viewModel.removeFromCart(product)
             },
-            onItemClick = { product ->
+            onItemProductClick = { product ->
                 val dialog = ProductDetailDialogFragment.newInstance(product)
                 dialog.setOnAddToCartClickListener(this)
                 dialog.show(supportFragmentManager, "ProductDetailDialog")
-            }
-        )
-        cartPackageAdapter = CartPackageAdapter(
-            onDeleteClick = { packageProduct ->
+            },
+            onDeletePackageClick = { packageProduct ->
                 viewModel.removePackageFromCart(packageProduct)
             },
-            onItemClick = { packageProduct ->
+            onItemPackageClick = { packageProduct ->
                 // TODO: Implement package product detail dialog if needed
             }
         )
         binding.cartRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@CartActivity)
-            adapter = cartAdapter // For simplicity, show individual products by default
+            adapter = combinedCartAdapter
         }
     }
 
     private fun observeCartItems() {
         lifecycleScope.launch {
             viewModel.cartItems.collectLatest { cartItems ->
-                val products = cartItems.mapNotNull {
-                    when (it) {
-                        is CartItem.IndividualProduct -> it.product
-                        else -> null
-                    }
-                }
-                val packageProducts = cartItems.mapNotNull {
-                    when (it) {
-                        is CartItem.PackageProductItem -> it.packageProduct
-                        else -> null
-                    }
-                }
-                // For demonstration, show individual products and package products separately
-                cartAdapter.submitList(products)
-                cartPackageAdapter.submitList(packageProducts)
+                val combinedCartAdapter = binding.cartRecyclerView.adapter as CombinedCartAdapter
+                combinedCartAdapter.submitList(cartItems)
 
                 // Calculate total price including both product types
                 val totalPrice = cartItems.sumOf {
