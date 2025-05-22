@@ -131,8 +131,6 @@ class CombinedCartAdapter(
                                 .centerCrop()
                                 .into(packageImageView)
                         }
-
-                        // deleteButton.visibility = android.view.View.VISIBLE
                     }
                 }
     }
