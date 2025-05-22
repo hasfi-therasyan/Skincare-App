@@ -55,13 +55,19 @@ class CombinedCartAdapter(
             binding.deleteButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onDeleteProductClick(getItem(position) as CartItem.IndividualProduct)
+                    val item = getItem(position)
+                    if (item is CartItem.IndividualProduct) {
+                        onDeleteProductClick(item.product)
+                    }
                 }
             }
             binding.productItemLayout.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemProductClick(getItem(position) as CartItem.IndividualProduct)
+                    val item = getItem(position)
+                    if (item is CartItem.IndividualProduct) {
+                        onItemProductClick(item.product)
+                    }
                 }
             }
         }
@@ -94,14 +100,20 @@ class CombinedCartAdapter(
             binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemPackageClick(getItem(position) as CartItem.PackageProductItem)
+                    val item = getItem(position)
+                    if (item is CartItem.PackageProductItem) {
+                        onItemPackageClick(item.packageProduct)
+                    }
                 }
             }
 
             binding.deleteButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onDeletePackageClick(getItem(position) as CartItem.PackageProductItem)
+                    val item = getItem(position)
+                    if (item is CartItem.PackageProductItem) {
+                        onDeletePackageClick(item.packageProduct)
+                    }
                 }
             }
         }
