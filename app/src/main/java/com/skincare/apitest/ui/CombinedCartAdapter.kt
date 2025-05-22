@@ -73,24 +73,24 @@ class CombinedCartAdapter(
             }
         }
 
-        fun bind(product: Product) {
-            binding.apply {
-                productNameTextView.text = product.productName
-                productDescriptionTextView.text = product.description
-                productPriceTextView.text = product.getFormattedPrice()
+                fun bind(product: Product) {
+                    binding.apply {
+                        productNameTextView.text = product.productName
+                        productDescriptionTextView.text = product.description
+                        productPriceTextView.text = product.getFormattedPrice()
 
-                product.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
-                    Glide.with(productImageView)
-                        .load(base64Image)
-                        .centerCrop()
-                        .into(productImageView)
+                        product.imageData?.let { imageData ->
+                            val base64Image = "data:image/png;base64,$imageData"
+                            Glide.with(productImageView)
+                                .load(base64Image)
+                                .centerCrop()
+                                .into(productImageView)
+                        }
+
+                        // deleteButton.visibility = android.view.View.VISIBLE
+                        cartButton.visibility = android.view.View.GONE
+                    }
                 }
-
-                deleteButton.visibility = android.view.View.VISIBLE
-                cartButton.visibility = android.view.View.GONE
-            }
-        }
     }
 
     inner class PackageProductViewHolder(private val binding: ItemPackageProductBinding) : RecyclerView.ViewHolder(binding.root) {
