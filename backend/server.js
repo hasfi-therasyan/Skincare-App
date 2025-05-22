@@ -2,6 +2,8 @@ const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
 
 // PostgreSQL connection pool
 const pool = new Pool({
@@ -11,6 +13,10 @@ const pool = new Pool({
   password: 'password',
   port: 5432,
 });
+
+// Load GraphQL schema from schema.graphqls file
+const schemaPath = path.join(__dirname, '../app/src/main/graphql/schema.graphqls');
+const typeDefs = gql(fs.readFileSync(schemaPath, { encoding: 'utf-8' }));
 
 // Express app setup
 const app = express();
@@ -95,30 +101,6 @@ app.get('/api/package/image/:id', async (req, res) => {
   }
 });
 
-// GraphQL type definitions
-const typeDefs = gql`
-  type Product {
-    id: ID!
-    product_name: String
-    description: String
-    price: Float
-    image_data: String
-  }
-
-  type Package {
-    id: ID!
-    packageName: String
-    items: [String]
-    price: Float
-    image: String
-  }
-
-  type Query {
-    products: [Product]
-    packages: [Package]
-  }
-`;
-
 // GraphQL resolvers
 const resolvers = {
   Query: {
@@ -150,6 +132,30 @@ const resolvers = {
       } catch (error) {
         console.error('Error fetching packages:', error);
         throw new Error('Failed to fetch packages');
+      }
+    },
+    productImage: async (_, { id }) => {
+      try {
+        const result = await pool.query('SELECT image_data FROM individual_products WHERE id = $1', [id]);
+        if (result.rows.length > 0) {
+          return { image_data: result.rows[0].image_data ? result.rows[0].image_data.toString('base64') : null };
+        }
+        return null;
+      } catch (error) {
+        console.error('Error fetching product image:', error);
+        throw new Error('Failed to fetch product image');
+      }
+    },
+    packageImage: async (_, { id }) => {
+      try {
+        const result = await pool.query('SELECT image_data FROM package_products WHERE id = $1', [id]);
+        if (result.rows.length > 0) {
+          return { image_data: result.rows[0].image_data ? result.rows[0].image_data.toString('base64') : null };
+        }
+        return null;
+      } catch (error) {
+        console.error('Error fetching package image:', error);
+        throw new Error('Failed to fetch package image');
       }
     },
   },

@@ -1,6 +1,8 @@
 type Query {
   products: [Product!]!
   productImage(id: ID!): ProductImage
+  packages: [Package!]!
+  packageImage(id: ID!): PackageImage
 }
 
 type Product {
@@ -12,5 +14,17 @@ type Product {
 }
 
 type ProductImage {
+  image_data: String!
+}
+
+type Package {
+  id: ID!
+  packageName: String!
+  items: [String!]!
+  price: Float!
+  image: String
+}
+
+type PackageImage {
   image_data: String!
 }
