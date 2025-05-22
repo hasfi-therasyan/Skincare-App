@@ -46,13 +46,20 @@ app.get('/api/products', async (req, res) => {
 app.get('/api/packages', async (req, res) => {
   try {
     const result = await pool.query('SELECT id, package_name, items, price, image_data FROM package_products');
-    const packages = result.rows.map(row => ({
-      id: row.id,
-      package_name: row.package_name,
-      items: JSON.parse(JSON.stringify(yaml.load(row.items) || [])),
-      price: row.price,
-      image_data: row.image_data ? row.image_data.toString('base64') : null,
-    }));
+    const packages = result.rows.map(row => {
+      let items = yaml.load(row.items);
+      if (!Array.isArray(items)) {
+        items = items ? [items] : [];
+      }
+      return {
+        id: row.id,
+        package_name: row.package_name,
+        items: items,
+        price: row.price,
+        image_data: row.image_data ? row.image_data.toString('base64') : null,
+      };
+    });
+    console.log('Packages response:', JSON.stringify({ packages }));
     res.json({ packages });
   } catch (error) {
     console.error('Error fetching packages:', error);
