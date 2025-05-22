@@ -126,7 +126,7 @@ const resolvers = {
         return result.rows.map(row => ({
           id: row.id,
           packageName: row.package_name,
-          items: row.items,
+          items: yaml.load(row.items) || [],
           price: row.price,
           image: row.image_data ? row.image_data.toString('base64') : null,
         }));
