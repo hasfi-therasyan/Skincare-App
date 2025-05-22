@@ -74,6 +74,10 @@ class ProductViewModel : ViewModel() {
         CartRepository.addPackageToCart(packageProduct)
     }
 
+    fun removePackageFromCart(packageProduct: PackageProduct) {
+        CartRepository.removePackageFromCart(packageProduct)
+    }
+
     fun removeFromCart(product: Product) {
         CartRepository.removeFromCart(product)
     }

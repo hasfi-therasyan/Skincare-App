@@ -44,6 +44,7 @@ class CartPackageAdapter(
                 }
             }
 
+            binding.deleteButton.visibility = android.view.View.VISIBLE
             binding.deleteButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
