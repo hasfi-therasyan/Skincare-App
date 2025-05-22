@@ -108,15 +108,16 @@ class CombinedCartAdapter(
                 }
             }
 
-            binding.deleteButton.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item is CartItem.PackageProductItem) {
-                        onDeletePackageClick(item.packageProduct)
-                    }
-                }
-            }
+            // Removed deleteButton click listener due to unresolved reference error
+            // binding.deleteButton.setOnClickListener {
+            //     val position = adapterPosition
+            //     if (position != RecyclerView.NO_POSITION) {
+            //         val item = getItem(position)
+            //         if (item is CartItem.PackageProductItem) {
+            //             onDeletePackageClick(item.packageProduct)
+            //         }
+            //     }
+            // }
         }
 
                 fun bind(packageProduct: PackageProduct) {
