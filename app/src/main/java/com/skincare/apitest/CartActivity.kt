@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.skincare.apitest.repository.CartItem
 import com.skincare.apitest.ui.CartPackageAdapter
+import com.skincare.apitest.ui.CombinedCartAdapter
 
 
 class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCartClickListener {
