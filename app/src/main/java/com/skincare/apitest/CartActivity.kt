@@ -62,12 +62,18 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
     private fun observeCartItems() {
         lifecycleScope.launch {
             viewModel.cartItems.collectLatest { cartItems ->
-                val products = cartItems.map { it.product }
+                val products = cartItems.mapNotNull {
+                    when (it) {
+                        is com.skincare.apitest.repository.CartItem.IndividualProduct -> it.product
+                        else -> null
+                    }
+                }
                 cartAdapter.submitList(products)
                 // Calculate total price
-                val totalPrice = cartItems.sumOf { it.product.price }
+                val totalPrice = cartItems.filterIsInstance<com.skincare.apitest.repository.CartItem.IndividualProduct>()
+                    .sumOf { it.product.price }
                 // Format total price as currency
-                val formattedTotal = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("in", "ID")).format(totalPrice)
+                val formattedTotal = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("in", "ID")).format(totalPrice.toDouble())
                 // Update total price TextView
                 binding.totalPriceTextView.text = "Total: $formattedTotal"
             }
