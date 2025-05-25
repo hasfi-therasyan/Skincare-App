@@ -25,14 +25,14 @@ class SearchResultsAdapter(
     }
 
     inner class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val nameTextView: TextView = itemView.findViewById(R.id.searchResultNameTextView)
-        private val descriptionTextView: TextView = itemView.findViewById(R.id.searchResultDescriptionTextView)
+        private val nameTextView: TextView = itemView.findViewById(R.id.productNameTextView)
+        private val descriptionTextView: TextView = itemView.findViewById(R.id.productPriceTextView)
 
         fun bind(item: SearchItem) {
             when (item) {
                 is SearchItem.IndividualSearchItem -> {
                     nameTextView.text = item.product.productName
-                    descriptionTextView.text = item.product.description
+                    descriptionTextView.text = "$${item.product.price}"
                 }
                 is SearchItem.PackageSearchItem -> {
                     nameTextView.text = item.packageProduct.packageName
