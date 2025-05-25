@@ -88,7 +88,11 @@ class ProductViewModel : ViewModel() {
 
     fun searchProducts(query: String) {
         viewModelScope.launch {
-            val lowerQuery = query.lowercase()
+            val lowerQuery = query.lowercase().trim()
+            if (lowerQuery.isEmpty()) {
+                _searchResults.value = emptyList()
+                return@launch
+            }
             val individualResults = when (val response = _productsState.value) {
                 is ApiResponse.Success -> response.data.filter { it.productName.lowercase().contains(lowerQuery) }
                 else -> emptyList()

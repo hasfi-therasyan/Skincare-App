@@ -18,6 +18,13 @@ class SearchActivity : AppCompatActivity() {
 
         val query = intent.getStringExtra("search_query") ?: ""
 
+        // Clear previous fragments to avoid stacking multiple fragments
+        val fragmentManager = supportFragmentManager
+        val existingFragment = fragmentManager.findFragmentById(binding.fragmentContainer.id)
+        if (existingFragment != null) {
+            fragmentManager.beginTransaction().remove(existingFragment).commitNow()
+        }
+
         val fragment = SearchResultsFragment.newInstance(query)
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)

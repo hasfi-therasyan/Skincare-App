@@ -54,8 +54,10 @@ class SearchResultsFragment : Fragment() {
                 if (results.isNotEmpty()) {
                     binding.noResultsTextView.visibility = View.GONE
                     adapter.submitList(results)
+                    binding.searchRecyclerView.visibility = View.VISIBLE
                 } else {
                     binding.noResultsTextView.visibility = View.VISIBLE
+                    binding.searchRecyclerView.visibility = View.GONE
                 }
             }
         }
