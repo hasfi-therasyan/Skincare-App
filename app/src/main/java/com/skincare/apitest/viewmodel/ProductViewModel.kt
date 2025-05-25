@@ -14,6 +14,15 @@ import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.repository.CartRepository
 import com.skincare.apitest.repository.CartItem
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.asStateFlow
+import com.skincare.apitest.model.PackageProduct
+import com.skincare.apitest.repository.CartRepository
+import com.skincare.apitest.repository.CartItem
+import com.skincare.apitest.SearchItem
+
 class ProductViewModel : ViewModel() {
     private val repository = ProductRepository()
 
@@ -33,6 +42,9 @@ class ProductViewModel : ViewModel() {
     val cartItems: StateFlow<List<CartItem>> = CartRepository.cartItems
 
     val cartItemCount: StateFlow<Int> = CartRepository.cartItemCount
+
+    private val _searchResults = MutableStateFlow<List<SearchItem>>(emptyList())
+    val searchResults: StateFlow<List<SearchItem>> get() = _searchResults
 
     fun setApiType(type: ApiType) {
         _selectedApiType.value = type
@@ -80,5 +92,21 @@ class ProductViewModel : ViewModel() {
 
     fun removeFromCart(product: Product) {
         CartRepository.removeFromCart(product)
+    }
+
+    fun searchProducts(query: String) {
+        viewModelScope.launch {
+            val lowerQuery = query.lowercase()
+            val individualResults = when (val response = _productsState.value) {
+                is ApiResponse.Success -> response.data.filter { it.productName.lowercase().contains(lowerQuery) }
+                else -> emptyList()
+            }
+            val packageResults = when (val response = _packageProductsState.value) {
+                is ApiResponse.Success -> response.data.filter { it.packageName.lowercase().contains(lowerQuery) }
+                else -> emptyList()
+            }
+            _searchResults.value = individualResults.map { SearchItem.IndividualSearchItem(it) } +
+                                   packageResults.map { SearchItem.PackageSearchItem(it) }
+        }
     }
 }
