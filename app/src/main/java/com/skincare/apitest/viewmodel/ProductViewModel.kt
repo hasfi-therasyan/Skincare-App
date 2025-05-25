@@ -97,8 +97,16 @@ class ProductViewModel : ViewModel() {
                 is ApiResponse.Success -> response.data.filter { it.packageName.lowercase().contains(lowerQuery) }
                 else -> emptyList()
             }
-            _searchResults.value = individualResults.map { SearchItem.IndividualSearchItem(it) } +
-                                   packageResults.map { SearchItem.PackageSearchItem(it) }
+            // Combine and sort results by relevance or name
+            val combinedResults = (individualResults.map { SearchItem.IndividualSearchItem(it) } +
+                                   packageResults.map { SearchItem.PackageSearchItem(it) })
+                .sortedBy { item ->
+                    when (item) {
+                        is SearchItem.IndividualSearchItem -> item.product.productName.lowercase().indexOf(lowerQuery)
+                        is SearchItem.PackageSearchItem -> item.packageProduct.packageName.lowercase().indexOf(lowerQuery)
+                    }
+                }
+            _searchResults.value = combinedResults
         }
     }
 }
