@@ -49,6 +49,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.setApiType(selectedApiType)
         viewModel.clearCurrentImage()
 
+        // Fetch products and packages to populate data for search
+        viewModel.fetchProducts()
+        viewModel.fetchPackages()
+
         setupViewPagerWithTabs()
 
         setupObservers()
