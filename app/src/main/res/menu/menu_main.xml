@@ -14,6 +14,6 @@
         android:title="Cart"
         android:icon="@drawable/ic_shopping_cart"
         app:showAsAction="ifRoom"
-        app:actionViewLayout="@layout/cart_action_view" />
+        />
 
 </menu>
