@@ -21,12 +21,12 @@ class ProductRepository {
         .create(ProductService::class.java)
     private val apolloClient = ApolloClientProvider.getApolloClient()
 
-    fun getProducts(apiType: ApiType): Flow<ApiResponse<List<Product>>> = flow {
+    fun getProducts(apiType: ApiType, searchQuery: String? = null): Flow<ApiResponse<List<Product>>> = flow {
         emit(ApiResponse.Loading)
         try {
             when (apiType) {
                 ApiType.RETROFIT -> {
-                    val response = retrofitService.getProducts()
+                    val response = retrofitService.getProducts(searchQuery)
                     if (response.isSuccessful) {
                         response.body()?.let { productResponse ->
                             emit(ApiResponse.Success(productResponse.products))

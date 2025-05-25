@@ -27,7 +27,16 @@ app.use(express.json());
 // REST API endpoint to get individual products
 app.get('/api/products', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, product_name, description, price, image_data FROM individual_products');
+    const search = req.query.search || '';
+    let queryText = 'SELECT id, product_name, description, price, image_data FROM individual_products';
+    let queryParams = [];
+
+    if (search) {
+      queryText += ' WHERE product_name ILIKE $1';
+      queryParams.push(`%${search}%`);
+    }
+
+    const result = await pool.query(queryText, queryParams);
     const products = result.rows.map(row => ({
       id: row.id,
       product_name: row.product_name,

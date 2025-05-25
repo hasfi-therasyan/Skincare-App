@@ -73,14 +73,10 @@ class SearchResultsFragment : Fragment() {
             binding.recyclerView.visibility = View.GONE
             binding.noResultsText.visibility = View.GONE
 
-            // Ensure products and packages are loaded and wait for success
-            if (viewModel.productsState.value !is ApiResponse.Success) {
-                viewModel.fetchProducts()
-                viewModel.productsState.collect { state ->
-                    if (state is ApiResponse.Success) return@collect
-                }
-            }
+            // Fetch products with search query
+            viewModel.fetchProducts(query)
 
+            // Ensure packages are loaded and wait for success
             if (viewModel.packageProductsState.value !is ApiResponse.Success) {
                 viewModel.fetchPackages()
                 viewModel.packageProductsState.collect { state ->

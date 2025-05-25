@@ -38,21 +38,32 @@ class ProductViewModel : ViewModel() {
     private val _searchResults = MutableStateFlow<List<SearchItem>>(emptyList())
     val searchResults: StateFlow<List<SearchItem>> get() = _searchResults
 
+    private var productsLoaded = false
+    private var packagesLoaded = false
+
     fun setApiType(type: ApiType) {
         _selectedApiType.value = type
     }
 
-    fun fetchProducts() {
+    fun fetchProducts(searchQuery: String? = null) {
+        if (productsLoaded && searchQuery.isNullOrEmpty()) return
         viewModelScope.launch {
-            repository.getProducts(_selectedApiType.value).collect { response ->
+            repository.getProducts(_selectedApiType.value, searchQuery).collect { response ->
+                if (response is ApiResponse.Success) {
+                    productsLoaded = true
+                }
                 _productsState.value = response
             }
         }
     }
 
     fun fetchPackages() {
+        if (packagesLoaded) return
         viewModelScope.launch {
             repository.getPackages(_selectedApiType.value).collect { response ->
+                if (response is ApiResponse.Success) {
+                    packagesLoaded = true
+                }
                 _packageProductsState.value = response
             }
         }

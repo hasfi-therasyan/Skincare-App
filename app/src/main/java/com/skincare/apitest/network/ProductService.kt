@@ -5,6 +5,7 @@ import com.skincare.apitest.model.ProductResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 import com.apollographql.apollo3.ApolloClient
 import retrofit2.Retrofit
@@ -16,7 +17,7 @@ import com.skincare.apitest.model.PackageProductResponse
 
 interface ProductService {
     @GET("products")
-    suspend fun getProducts(): Response<ProductResponse>
+    suspend fun getProducts(@Query("search") search: String? = null): Response<ProductResponse>
 
     @GET("product/image/{id}")
     suspend fun getProductImage(@Path("id") id: Int): Response<String>

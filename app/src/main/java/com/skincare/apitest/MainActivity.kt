@@ -106,20 +106,29 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(com.skincare.apitest.R.id.action_search)
         val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
         searchView?.queryHint = "Search products..."
-        searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let {
-                    val intent = android.content.Intent(this@MainActivity, com.skincare.apitest.SearchActivity::class.java)
-                    intent.putExtra("search_query", it)
-                    startActivity(intent)
-                }
-                return true
-            }
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // Optionally handle live search here
-                return true
-            }
-        })
+private var lastSearchTime = 0L
+
+searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastSearchTime < 1000) {
+            // Ignore rapid repeated submits within 1 second
+            return true
+        }
+        lastSearchTime = currentTime
+
+        query?.let {
+            val intent = android.content.Intent(this@MainActivity, com.skincare.apitest.SearchActivity::class.java)
+            intent.putExtra("search_query", it)
+            startActivity(intent)
+        }
+        return true
+    }
+    override fun onQueryTextChange(newText: String?): Boolean {
+        // Optionally handle live search here
+        return true
+    }
+})
 
         return true
     }

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Skincare App
 
 An Android application that demonstrates dual API implementation (REST and GraphQL) for fetching skincare products from a PostgreSQL database.
@@ -97,6 +98,8 @@ CREATE TABLE individual_products (
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 =======
+=======
+>>>>>>> 38e874d (Improve search functionality: add debounce, caching in ViewModel, and UI feedback improvements)
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -133,4 +136,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<<<<<<< HEAD
 >>>>>>> 28806c9 (Add product detail pop-out feature on product item click with cart button)
+=======
+>>>>>>> 38e874d (Improve search functionality: add debounce, caching in ViewModel, and UI feedback improvements)
