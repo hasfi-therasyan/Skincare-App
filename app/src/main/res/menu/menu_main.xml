@@ -12,7 +12,7 @@
     <item
         android:id="@+id/action_cart"
         android:title="Cart"
-        android:icon="@android:drawable/ic_menu_cart"
+        android:icon="@drawable/ic_shopping_cart"
         app:showAsAction="ifRoom"
         app:actionViewLayout="@layout/cart_action_view" />
 
