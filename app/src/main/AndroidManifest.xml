@@ -30,5 +30,6 @@
             android:name=".MainActivity"
             android:exported="true"/>
         <activity android:name=".CartActivity" android:exported="false"/>
+        <activity android:name=".SearchActivity" android:exported="true"/>
     </application>
 </manifest>

@@ -13,14 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.repository.CartRepository
 import com.skincare.apitest.repository.CartItem
-
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.asStateFlow
-import com.skincare.apitest.model.PackageProduct
-import com.skincare.apitest.repository.CartRepository
-import com.skincare.apitest.repository.CartItem
 import com.skincare.apitest.SearchItem
 
 class ProductViewModel : ViewModel() {
