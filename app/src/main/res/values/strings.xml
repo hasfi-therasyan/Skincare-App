@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Skincare App</string>
+    
+    <!-- Main Activity -->
+    <string name="select_api">Select API Type:</string>
+    <string name="fetch_products">Fetch Products</string>
+    <string name="error_loading_products">Error loading products</string>
+    <string name="product_image">Product Image</string>
+    <string name="no_products_found">No products found</string>
+    <string name="network_error">Network error occurred</string>
+    <string name="unknown_error">An unknown error occurred</string>
+    
+    <!-- API Types -->
+    <string-array name="api_options">
+        <item>Use Retrofit (REST)</item>
+        <item>Use Apollo (GraphQL)</item>
+    </string-array>
+    
+    <!-- Content Descriptions -->
+    <string name="loading_indicator">Loading</string>
+    <string name="error_icon">Error</string>
+
+    <!-- Cart feature -->
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="cart">Cart</string>
+    <string name="delete">delete</string>
+    <string name="package_image">package_image\n</string>
+</resources>

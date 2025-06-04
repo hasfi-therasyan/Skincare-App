@@ -1,0 +1,30 @@
+type Query {
+  products: [Product!]!
+  productImage(id: ID!): ProductImage
+  packages: [Package!]!
+  packageImage(id: ID!): PackageImage
+}
+
+type Product {
+  id: ID!
+  product_name: String!
+  description: String!
+  price: Float!
+  image_data: String
+}
+
+type ProductImage {
+  image_data: String!
+}
+
+type Package {
+  id: ID!
+  packageName: String!
+  items: [String!]!
+  price: Float!
+  image: String
+}
+
+type PackageImage {
+  image_data: String!
+}
