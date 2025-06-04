@@ -52,16 +52,16 @@ class CombinedCartAdapter(
 
     inner class ProductViewHolder(private val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            // Removed deleteButton click listener due to unresolved reference error
-            // binding.deleteButton.setOnClickListener {
-            //     val position = adapterPosition
-            //     if (position != RecyclerView.NO_POSITION) {
-            //         val item = getItem(position)
-            //         if (item is CartItem.IndividualProduct) {
-            //             onDeleteProductClick(item.product)
-            //         }
-            //     }
-            // }
+            binding.deleteButton.visibility = android.view.View.VISIBLE
+            binding.deleteButton.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item is CartItem.IndividualProduct) {
+                        onDeleteProductClick(item.product)
+                    }
+                }
+            }
             binding.productItemLayout.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -73,30 +73,40 @@ class CombinedCartAdapter(
             }
         }
 
-                fun bind(product: Product) {
-                    binding.apply {
-                        productNameTextView.text = product.productName
-                        productDescriptionTextView.text = product.description
-                        productPriceTextView.text = product.getFormattedPrice()
+        fun bind(product: Product) {
+            binding.apply {
+                productNameTextView.text = product.productName
+                productDescriptionTextView.text = product.description
+                productPriceTextView.text = product.getFormattedPrice()
 
-                        product.imageData?.let { imageData ->
-                            val base64Image = "data:image/png;base64,$imageData"
-                            Glide.with(productImageView)
-                                .load(base64Image)
-                                .centerCrop()
-                                .into(productImageView)
-                        }
-
-                        // deleteButton.visibility = android.view.View.VISIBLE
-                        cartButton.visibility = android.view.View.GONE
-                    }
+                product.imageData?.let { imageData ->
+                    val base64Image = "data:image/png;base64,$imageData"
+                    Glide.with(productImageView)
+                        .load(base64Image)
+                        .centerCrop()
+                        .into(productImageView)
                 }
+
+                // deleteButton.visibility = android.view.View.VISIBLE
+                cartButton.visibility = android.view.View.GONE
+            }
+        }
     }
 
     inner class PackageProductViewHolder(private val binding: ItemPackageProductBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.cartButton.visibility = android.view.View.GONE
             binding.cartButton.isEnabled = false
+            binding.deleteButton.visibility = android.view.View.VISIBLE
+            binding.deleteButton.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item is CartItem.PackageProductItem) {
+                        onDeletePackageClick(item.packageProduct)
+                    }
+                }
+            }
 
             binding.root.setOnClickListener {
                 val position = adapterPosition
@@ -107,34 +117,23 @@ class CombinedCartAdapter(
                     }
                 }
             }
-
-            // Removed deleteButton click listener due to unresolved reference error
-            // binding.deleteButton.setOnClickListener {
-            //     val position = adapterPosition
-            //     if (position != RecyclerView.NO_POSITION) {
-            //         val item = getItem(position)
-            //         if (item is CartItem.PackageProductItem) {
-            //             onDeletePackageClick(item.packageProduct)
-            //         }
-            //     }
-            // }
         }
 
-                fun bind(packageProduct: PackageProduct) {
-                    binding.apply {
-                        packageNameTextView.text = packageProduct.packageName
-                        packageItemsTextView.text = packageProduct.items.joinToString(", ")
-                        packagePriceTextView.text = packageProduct.getFormattedPrice()
+        fun bind(packageProduct: PackageProduct) {
+            binding.apply {
+                packageNameTextView.text = packageProduct.packageName
+                packageItemsTextView.text = packageProduct.items.joinToString(", ")
+                packagePriceTextView.text = packageProduct.getFormattedPrice()
 
-                        packageProduct.imageData?.let { imageData ->
-                            val base64Image = "data:image/png;base64,$imageData"
-                            Glide.with(packageImageView)
-                                .load(base64Image)
-                                .centerCrop()
-                                .into(packageImageView)
-                        }
-                    }
+                packageProduct.imageData?.let { imageData ->
+                    val base64Image = "data:image/png;base64,$imageData"
+                    Glide.with(packageImageView)
+                        .load(base64Image)
+                        .centerCrop()
+                        .into(packageImageView)
                 }
+            }
+        }
     }
 
     private class CartItemDiffCallback : DiffUtil.ItemCallback<CartItem>() {
