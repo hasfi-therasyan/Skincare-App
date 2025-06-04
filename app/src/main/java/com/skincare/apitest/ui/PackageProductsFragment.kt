@@ -48,8 +48,9 @@ class PackageProductsFragment : Fragment() {
             onItemClick = { packageProduct ->
                 // TODO: Implement package product detail dialog if needed
             },
-            onCartClick = { packageProduct ->
-                viewModel.addPackageToCart(packageProduct)
+            onCartClick = { packageProduct, selectedItems ->
+                // Adapt viewModel method to accept selectedItems if needed
+                viewModel.addPackageToCart(packageProduct, selectedItems)
             }
         )
         binding.productsRecyclerView.apply {

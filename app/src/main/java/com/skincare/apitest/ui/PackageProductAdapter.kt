@@ -2,6 +2,8 @@ package com.skincare.apitest.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,8 +13,11 @@ import com.skincare.apitest.model.PackageProduct
 
 class PackageProductAdapter(
     private val onItemClick: (PackageProduct) -> Unit,
-    private val onCartClick: (PackageProduct) -> Unit
+    private val onCartClick: (PackageProduct, List<String>) -> Unit
 ) : ListAdapter<PackageProduct, PackageProductAdapter.PackageProductViewHolder>(PackageProductDiffCallback()) {
+
+    // Store selected items per package id
+    private val selectedItemsMap = mutableMapOf<Int, MutableList<String>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PackageProductViewHolder {
         val binding = ItemPackageProductBinding.inflate(
@@ -41,7 +46,9 @@ class PackageProductAdapter(
             binding.cartButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onCartClick(getItem(position))
+                    val pkg = getItem(position)
+                    val selectedItems = selectedItemsMap[pkg.id] ?: pkg.items.toMutableList()
+                    onCartClick(pkg, selectedItems)
                 }
             }
         }
@@ -49,7 +56,6 @@ class PackageProductAdapter(
         fun bind(packageProduct: PackageProduct) {
             binding.apply {
                 packageNameTextView.text = packageProduct.packageName
-                packageItemsTextView.text = packageProduct.items.joinToString(separator = ", ")
                 packagePriceTextView.text = packageProduct.getFormattedPrice()
 
                 // Load image if available
@@ -59,6 +65,44 @@ class PackageProductAdapter(
                         .load(base64Image)
                         .centerCrop()
                         .into(packageImageView)
+                }
+
+                // Clear previous views in itemsContainer
+                itemsContainer.removeAllViews()
+
+                // Initialize selected items list if not present
+                val selectedItems = selectedItemsMap.getOrPut(packageProduct.id) {
+                    packageProduct.items.toMutableList()
+                }
+
+                // For each item, add a Spinner dropdown
+                packageProduct.items.forEachIndexed { index, item ->
+                    val spinner = Spinner(binding.root.context)
+                    val adapter = ArrayAdapter(
+                        binding.root.context,
+                        android.R.layout.simple_spinner_item,
+                        packageProduct.items // You may replace with a full list of available items if needed
+                    )
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner.adapter = adapter
+                    spinner.setSelection(adapter.getPosition(selectedItems[index]))
+
+                    spinner.setOnItemSelectedListener(object : android.widget.AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: android.widget.AdapterView<*>,
+                            view: android.view.View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            selectedItems[index] = adapter.getItem(position) ?: item
+                        }
+
+                        override fun onNothingSelected(parent: android.widget.AdapterView<*>) {
+                            // Do nothing
+                        }
+                    })
+
+                    itemsContainer.addView(spinner)
                 }
             }
         }

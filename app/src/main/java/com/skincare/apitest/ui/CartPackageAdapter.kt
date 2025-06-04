@@ -50,8 +50,12 @@ class CartPackageAdapter(
         fun bind(packageProduct: PackageProduct) {
             binding.apply {
                 packageNameTextView.text = packageProduct.packageName
-                packageItemsTextView.text = packageProduct.items.joinToString(", ")
-                packagePriceTextView.text = packageProduct.getFormattedPrice()
+                // Display items as comma-separated string since dropdowns are not needed in cart
+                val itemsString = packageProduct.items.joinToString(", ")
+                // Assuming you have a TextView for items display, else create one or reuse an existing view
+                // For now, reuse packagePriceTextView's sibling or add a new TextView in layout if needed
+                // Here, just appending items to price text for demonstration
+                packagePriceTextView.text = "${packageProduct.getFormattedPrice()} - Items: $itemsString"
 
                 packageProduct.imageData?.let { imageData ->
                     val base64Image = "data:image/png;base64,$imageData"

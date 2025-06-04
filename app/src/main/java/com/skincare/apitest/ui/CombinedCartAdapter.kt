@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.skincare.apitest.databinding.ItemPackageProductBinding
 import com.skincare.apitest.databinding.ItemProductBinding
 import com.skincare.apitest.model.PackageProduct
+import com.skincare.apitest.model.CustomPackageProduct
 import com.skincare.apitest.model.Product
 import com.skincare.apitest.repository.CartItem
 
@@ -103,7 +104,7 @@ class CombinedCartAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val item = getItem(position)
                     if (item is CartItem.PackageProductItem) {
-                        onDeletePackageClick(item.packageProduct)
+                        onDeletePackageClick(item.packageProduct.basePackage)
                     }
                 }
             }
@@ -113,19 +114,20 @@ class CombinedCartAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val item = getItem(position)
                     if (item is CartItem.PackageProductItem) {
-                        onItemPackageClick(item.packageProduct)
+                        onItemPackageClick(item.packageProduct.basePackage)
                     }
                 }
             }
         }
 
-        fun bind(packageProduct: PackageProduct) {
+        fun bind(customPackageProduct: CustomPackageProduct) {
             binding.apply {
-                packageNameTextView.text = packageProduct.packageName
-                packageItemsTextView.text = packageProduct.items.joinToString(", ")
-                packagePriceTextView.text = packageProduct.getFormattedPrice()
+                packageNameTextView.text = customPackageProduct.packageName
+                // Display selected items as comma-separated string
+                val itemsString = customPackageProduct.selectedItems.joinToString(", ")
+                packagePriceTextView.text = "${customPackageProduct.getFormattedPrice()} - Items: $itemsString"
 
-                packageProduct.imageData?.let { imageData ->
+                customPackageProduct.imageData?.let { imageData ->
                     val base64Image = "data:image/png;base64,$imageData"
                     Glide.with(packageImageView)
                         .load(base64Image)

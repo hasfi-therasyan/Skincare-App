@@ -38,13 +38,15 @@
                 android:textColor="@android:color/black"
                 android:text="Package Name" />
 
-            <TextView
-                android:id="@+id/packageItemsTextView"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/itemsContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="@android:color/darker_gray"
-                android:text="Item1, Item2, Item3" />
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" >
+                <!-- Spinners for items will be added dynamically in adapter -->
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/packagePriceTextView"

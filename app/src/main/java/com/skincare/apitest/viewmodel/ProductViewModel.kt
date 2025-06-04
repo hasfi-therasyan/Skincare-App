@@ -70,8 +70,8 @@ class ProductViewModel : ViewModel() {
         CartRepository.addToCart(product)
     }
 
-    fun addPackageToCart(packageProduct: PackageProduct) {
-        CartRepository.addPackageToCart(packageProduct)
+    fun addPackageToCart(packageProduct: PackageProduct, selectedItems: List<String>) {
+        CartRepository.addPackageToCart(packageProduct, selectedItems)
     }
 
     fun removePackageFromCart(packageProduct: PackageProduct) {
