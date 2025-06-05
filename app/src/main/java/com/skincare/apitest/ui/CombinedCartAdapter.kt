@@ -123,9 +123,55 @@ class CombinedCartAdapter(
         fun bind(customPackageProduct: CustomPackageProduct) {
             binding.apply {
                 packageNameTextView.text = customPackageProduct.packageName
-                // Display selected items as comma-separated string
-                val itemsString = customPackageProduct.selectedItems.joinToString(", ")
-                packagePriceTextView.text = "${customPackageProduct.getFormattedPrice()} - Items: $itemsString"
+
+                // Setup spinners to show selected items and available items
+                val itemsList = customPackageProduct.basePackage.items.flatMap { item -> item.split(",").map { it.trim() } }
+                val spinners = listOf(spinner1, spinner2, spinner3)
+                val selectedItemsLocal = customPackageProduct.selectedItems.toMutableList()
+
+                spinners.forEachIndexed { index, spinner ->
+                    val filteredItems = itemsList.filter { item ->
+                        val selectedIndex = selectedItemsLocal.indexOf(item)
+                        selectedIndex == -1 || selectedIndex == index
+                    }
+
+                    val adapter = android.widget.ArrayAdapter<String>(
+                        binding.root.context,
+                        android.R.layout.simple_spinner_item,
+                        filteredItems
+                    )
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner.adapter = adapter
+
+                    val selectedItem = selectedItemsLocal.getOrNull(index) ?: filteredItems.getOrNull(0) ?: ""
+                    val selectionIndex = filteredItems.indexOf(selectedItem).takeIf { it >= 0 } ?: 0
+                    spinner.setSelection(selectionIndex)
+
+                    spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: android.widget.AdapterView<*>,
+                            view: android.view.View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val newItem = adapter.getItem(position) ?: ""
+                            if (selectedItemsLocal[index] != newItem) {
+                                selectedItemsLocal[index] = newItem
+                                // Update the selectedItems in the customPackageProduct if needed
+                                // Notify adapter or update UI accordingly
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: android.widget.AdapterView<*>) {
+                            // Do nothing
+                        }
+                    }
+
+                    spinner.isEnabled = true
+                    spinner.isClickable = true
+                }
+
+                packagePriceTextView.text = customPackageProduct.getFormattedPrice()
 
                 customPackageProduct.imageData?.let { imageData ->
                     val base64Image = "data:image/png;base64,$imageData"

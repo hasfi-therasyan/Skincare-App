@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.skincare.apitest.R
 import com.skincare.apitest.databinding.ItemPackageProductBinding
 import com.skincare.apitest.model.PackageProduct
 
@@ -47,7 +48,7 @@ class PackageProductAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val pkg = getItem(position)
-                    val selectedItems = selectedItemsMap[pkg.id] ?: pkg.items.toMutableList()
+                    val selectedItems = selectedItemsMap[pkg.id] ?: MutableList(3) { "" }
                     onCartClick(pkg, selectedItems)
                 }
             }
@@ -67,42 +68,62 @@ class PackageProductAdapter(
                         .into(packageImageView)
                 }
 
-                // Clear previous views in itemsContainer
-                itemsContainer.removeAllViews()
+                // Use static spinners defined in layout instead of dynamic addition
+                val spinner1 = binding.root.findViewById<Spinner>(R.id.spinner1)
+                val spinner2 = binding.root.findViewById<Spinner>(R.id.spinner2)
+                val spinner3 = binding.root.findViewById<Spinner>(R.id.spinner3)
+
+                val spinners = listOf(spinner1, spinner2, spinner3)
 
                 // Initialize selected items list if not present
-                val selectedItems = selectedItemsMap.getOrPut(packageProduct.id) {
-                    packageProduct.items.toMutableList()
+                val selectedItemsLocal = selectedItemsMap.getOrPut(packageProduct.id) {
+                    // Initialize with first 3 items in order or fewer if not enough items
+                    MutableList(spinners.size) { packageProduct.items.getOrNull(it) ?: "" }
                 }
 
-                // For each item, add a Spinner dropdown
-                packageProduct.items.forEachIndexed { index, item ->
-                    val spinner = Spinner(binding.root.context)
+                // For each spinner, set adapter and selection
+                spinners.forEachIndexed { index, spinner ->
+                    // Filter items to exclude already selected items in other spinners except current index
+                    val filteredItems = packageProduct.items.flatMap { it.split(",").map { it.trim() } }
+                        .filter { item ->
+                            val selectedIndex = selectedItemsLocal.indexOf(item)
+                            selectedIndex == -1 || selectedIndex == index
+                        }
+
                     val adapter = ArrayAdapter(
                         binding.root.context,
                         android.R.layout.simple_spinner_item,
-                        packageProduct.items // You may replace with a full list of available items if needed
+                        filteredItems
                     )
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinner.adapter = adapter
-                    spinner.setSelection(adapter.getPosition(selectedItems[index]))
 
-                    spinner.setOnItemSelectedListener(object : android.widget.AdapterView.OnItemSelectedListener {
+                    // Set initial selection to the item at the spinner's index or first item
+                    val selectedItem = selectedItemsLocal.getOrNull(index) ?: filteredItems.getOrNull(0) ?: ""
+                    val selectionIndex = filteredItems.indexOf(selectedItem).takeIf { it >= 0 } ?: 0
+                    spinner.setSelection(selectionIndex)
+
+                    spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
                             parent: android.widget.AdapterView<*>,
                             view: android.view.View?,
                             position: Int,
                             id: Long
                         ) {
-                            selectedItems[index] = adapter.getItem(position) ?: item
+                            val newItem = adapter.getItem(position) ?: ""
+                            if (selectedItemsLocal[index] != newItem) {
+                                selectedItemsLocal[index] = newItem
+                                notifyItemChanged(adapterPosition)
+                            }
                         }
 
                         override fun onNothingSelected(parent: android.widget.AdapterView<*>) {
                             // Do nothing
                         }
-                    })
+                    }
 
-                    itemsContainer.addView(spinner)
+                    spinner.isEnabled = true
+                    spinner.isClickable = true
                 }
             }
         }

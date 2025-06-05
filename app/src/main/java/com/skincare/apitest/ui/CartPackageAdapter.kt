@@ -15,7 +15,7 @@ class CartPackageAdapter(
 ) : ListAdapter<PackageProduct, CartPackageAdapter.CartPackageViewHolder>(CartPackageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartPackageViewHolder {
-        val binding = ItemPackageProductBinding.inflate(
+        val binding = com.skincare.apitest.databinding.ItemPackageProductBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -28,34 +28,23 @@ class CartPackageAdapter(
     }
 
     inner class CartPackageViewHolder(
-        private val binding: ItemPackageProductBinding
+        private val binding: com.skincare.apitest.databinding.ItemPackageProductBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.cartButton.visibility = android.view.View.GONE
-            binding.cartButton.isEnabled = false
-
-            binding.cartButton.setOnClickListener(null)
-
             binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick(getItem(position))
                 }
             }
-
-            // Remove references to deleteButton since it no longer exists in the layout
         }
 
         fun bind(packageProduct: PackageProduct) {
             binding.apply {
                 packageNameTextView.text = packageProduct.packageName
-                // Display items as comma-separated string since dropdowns are not needed in cart
-                val itemsString = packageProduct.items.joinToString(", ")
-                // Assuming you have a TextView for items display, else create one or reuse an existing view
-                // For now, reuse packagePriceTextView's sibling or add a new TextView in layout if needed
-                // Here, just appending items to price text for demonstration
-                packagePriceTextView.text = "${packageProduct.getFormattedPrice()} - Items: $itemsString"
+                // Remove selectedItemsTextView usage since spinner selections should be shown
+                packagePriceTextView.text = packageProduct.getFormattedPrice()
 
                 packageProduct.imageData?.let { imageData ->
                     val base64Image = "data:image/png;base64,$imageData"
@@ -66,6 +55,7 @@ class CartPackageAdapter(
                 }
             }
         }
+
     }
 
     private class CartPackageDiffCallback : DiffUtil.ItemCallback<PackageProduct>() {

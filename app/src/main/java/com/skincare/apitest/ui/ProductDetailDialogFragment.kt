@@ -60,10 +60,6 @@ class ProductDetailDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.dialogProductNameTextView.text = product.productName
-        binding.dialogProductDescriptionTextView.text = product.description
-        binding.dialogProductPriceTextView.text = product.getFormattedPrice()
-
         product.imageData?.let { imageData ->
             val base64Image = "data:image/png;base64,$imageData"
             Glide.with(binding.dialogProductImageView)
@@ -72,10 +68,6 @@ class ProductDetailDialogFragment : DialogFragment() {
                 .into(binding.dialogProductImageView)
         }
 
-        binding.dialogAddToCartButton.setOnClickListener {
-            listener?.onAddToCartClicked(product)
-            dismiss()
-        }
     }
 
     override fun onDestroyView() {
