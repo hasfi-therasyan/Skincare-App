@@ -80,10 +80,9 @@ class CombinedCartAdapter(
                 productDescriptionTextView.text = product.description
                 productPriceTextView.text = product.getFormattedPrice()
 
-                product.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
+                product.imageData?.let { imageUrl ->
                     Glide.with(productImageView)
-                        .load(base64Image)
+                        .load(imageUrl) // Changed to load image URL directly
                         .centerCrop()
                         .into(productImageView)
                 }
@@ -173,10 +172,9 @@ class CombinedCartAdapter(
 
                 packagePriceTextView.text = customPackageProduct.getFormattedPrice()
 
-                customPackageProduct.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
+                customPackageProduct.imageData?.let { imageUrl ->
                     Glide.with(packageImageView)
-                        .load(base64Image)
+                        .load(imageUrl)
                         .centerCrop()
                         .into(packageImageView)
                 }

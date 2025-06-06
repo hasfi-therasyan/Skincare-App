@@ -46,7 +46,7 @@ class ProductRepository {
                                 productName = product.product_name,
                                 description = product.description,
                                 price = product.price,
-                                imageData = product.image_data
+                                imageData = product.image_data // This is the image URL string now
                             )
                         } ?: emptyList()
                         emit(ApiResponse.Success(products))

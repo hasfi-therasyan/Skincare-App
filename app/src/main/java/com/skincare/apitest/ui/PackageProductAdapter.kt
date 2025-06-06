@@ -60,10 +60,9 @@ class PackageProductAdapter(
                 packagePriceTextView.text = packageProduct.getFormattedPrice()
 
                 // Load image if available
-                packageProduct.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
+                packageProduct.imageData?.let { imageUrl ->
                     Glide.with(packageImageView)
-                        .load(base64Image)
+                        .load(imageUrl) // Changed to load image URL directly
                         .centerCrop()
                         .into(packageImageView)
                 }

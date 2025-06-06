@@ -47,9 +47,8 @@ class CartPackageAdapter(
                 packagePriceTextView.text = packageProduct.getFormattedPrice()
 
                 packageProduct.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
                     Glide.with(packageImageView)
-                        .load(base64Image)
+                        .load(imageData) // Changed to load image URL directly
                         .centerCrop()
                         .into(packageImageView)
                 }

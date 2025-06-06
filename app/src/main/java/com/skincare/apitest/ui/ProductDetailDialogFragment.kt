@@ -1,8 +1,6 @@
 package com.skincare.apitest.ui
 
-import android.app.Dialog
 import android.os.Bundle
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,10 +58,9 @@ class ProductDetailDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        product.imageData?.let { imageData ->
-            val base64Image = "data:image/png;base64,$imageData"
+        product.imageData?.let { imageUrl ->
             Glide.with(binding.dialogProductImageView)
-                .load(base64Image)
+                .load(imageUrl)
                 .centerCrop()
                 .into(binding.dialogProductImageView)
         }

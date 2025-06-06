@@ -53,13 +53,13 @@ class CartAdapter(
                 productPriceTextView.text = product.getFormattedPrice()
 
                 // Load image if available
-                product.imageData?.let { imageData ->
-                    val base64Image = "data:image/png;base64,$imageData"
+                product.imageData?.let { imageUrl ->
                     Glide.with(productImageView)
-                        .load(base64Image)
+                        .load(imageUrl)
                         .centerCrop()
                         .into(productImageView)
                 }
+
 
                 // Show delete button and hide cart button in cart list
                 deleteButton.visibility = android.view.View.VISIBLE

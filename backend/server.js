@@ -33,7 +33,7 @@ app.get('/api/products', async (req, res) => {
       product_name: row.product_name,
       description: row.description,
       price: row.price,
-      image_data: row.image_data ? row.image_data.toString('base64') : null,
+      image_data: row.image_data || null,
     }));
     res.json({ products });
   } catch (error) {
@@ -56,7 +56,7 @@ app.get('/api/packages', async (req, res) => {
         package_name: row.package_name,
         items: items,
         price: row.price,
-        image_data: row.image_data ? row.image_data.toString('base64') : null,
+        image_data: row.image_data || null,
       };
     });
     console.log('Packages response:', JSON.stringify({ packages }));
@@ -67,45 +67,45 @@ app.get('/api/packages', async (req, res) => {
   }
 });
 
-// REST API endpoint to get individual product image by id
-app.get('/api/product/image/:id', async (req, res) => {
-  const id = req.params.id;
+// REST API endpoint to get individual products
+app.get('/api/products', async (req, res) => {
   try {
-    const result = await pool.query('SELECT image_data FROM individual_products WHERE id = $1', [id]);
-    if (result.rows.length > 0) {
-      const imageData = result.rows[0].image_data;
-      if (imageData) {
-        res.send(imageData);
-      } else {
-        res.status(404).send('Image not found');
-      }
-    } else {
-      res.status(404).send('Product not found');
-    }
+    const result = await pool.query('SELECT id, product_name, description, price, image_data FROM individual_products');
+    const products = result.rows.map(row => ({
+      id: row.id,
+      product_name: row.product_name,
+      description: row.description,
+      price: row.price,
+      image_url: row.image_data || null,
+    }));
+    res.json({ products });
   } catch (error) {
-    console.error('Error fetching product image:', error);
-    res.status(500).send('Internal server error');
+    console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// REST API endpoint to get package product image by id
-app.get('/api/package/image/:id', async (req, res) => {
-  const id = req.params.id;
+// REST API endpoint to get package products
+app.get('/api/packages', async (req, res) => {
   try {
-    const result = await pool.query('SELECT image_data FROM package_products WHERE id = $1', [id]);
-    if (result.rows.length > 0) {
-      const imageData = result.rows[0].image_data;
-      if (imageData) {
-        res.send(imageData);
-      } else {
-        res.status(404).send('Image not found');
+    const result = await pool.query('SELECT id, package_name, items, price, image_data FROM package_products');
+    const packages = result.rows.map(row => {
+      let items = yaml.load(row.items);
+      if (!Array.isArray(items)) {
+        items = items ? [items] : [];
       }
-    } else {
-      res.status(404).send('Package not found');
-    }
+      return {
+        id: row.id,
+        package_name: row.package_name,
+        items: items,
+        price: row.price,
+        image_url: row.image_data || null,
+      };
+    });
+    res.json({ packages });
   } catch (error) {
-    console.error('Error fetching package image:', error);
-    res.status(500).send('Internal server error');
+    console.error('Error fetching packages:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -120,7 +120,7 @@ const resolvers = {
           product_name: row.product_name,
           description: row.description,
           price: row.price,
-          image_data: row.image_data ? row.image_data.toString('base64') : null,
+          image_data: row.image_data || null,
         }));
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -140,7 +140,7 @@ const resolvers = {
             packageName: row.package_name,
             items: items,
             price: row.price,
-            image: row.image_data ? row.image_data.toString('base64') : null,
+            image: row.image_data || null,
           };
         });
       } catch (error) {
@@ -152,7 +152,7 @@ const resolvers = {
       try {
         const result = await pool.query('SELECT image_data FROM individual_products WHERE id = $1', [id]);
         if (result.rows.length > 0) {
-          return { image_data: result.rows[0].image_data ? result.rows[0].image_data.toString('base64') : null };
+          return { image_data: result.rows[0].image_data || null };
         }
         return null;
       } catch (error) {
@@ -164,7 +164,7 @@ const resolvers = {
       try {
         const result = await pool.query('SELECT image_data FROM package_products WHERE id = $1', [id]);
         if (result.rows.length > 0) {
-          return { image_data: result.rows[0].image_data ? result.rows[0].image_data.toString('base64') : null };
+          return { image_data: result.rows[0].image_data || null };
         }
         return null;
       } catch (error) {
