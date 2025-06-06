@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +24,7 @@ class PackageProductsFragment : Fragment() {
 
     private lateinit var viewModel: ProductViewModel
     private lateinit var packageProductAdapter: PackageProductAdapter
+    private var fullPackageList: List<PackageProduct> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +40,7 @@ class PackageProductsFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(ProductViewModel::class.java)
 
         setupRecyclerView()
+        setupSearchView()
         setupObservers()
 
         viewModel.fetchPackages()
@@ -59,6 +62,27 @@ class PackageProductsFragment : Fragment() {
         }
     }
 
+    private fun setupSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // No action on submit
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val filteredList = if (newText.isNullOrBlank()) {
+                    fullPackageList
+                } else {
+                    fullPackageList.filter {
+                        it.packageName.contains(newText, ignoreCase = true)
+                    }
+                }
+                packageProductAdapter.submitList(filteredList)
+                return true
+            }
+        })
+    }
+
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.packageProductsState.collectLatest { response ->
@@ -72,7 +96,8 @@ class PackageProductsFragment : Fragment() {
                         binding.progressBar.visibility = View.GONE
                         binding.productsRecyclerView.visibility = View.VISIBLE
                         binding.errorTextView.visibility = View.GONE
-                        packageProductAdapter.submitList(response.data)
+                        fullPackageList = response.data
+                        packageProductAdapter.submitList(fullPackageList)
                     }
                     is ApiResponse.Error -> {
                         binding.progressBar.visibility = View.GONE
