@@ -12,6 +12,9 @@ import com.skincare.apitest.R
 import com.skincare.apitest.databinding.ItemPackageProductBinding
 import com.skincare.apitest.model.PackageProduct
 
+import com.skincare.apitest.ui.PackageDetailDialogFragment
+import androidx.fragment.app.FragmentActivity
+
 class PackageProductAdapter(
     private val onItemClick: (PackageProduct) -> Unit,
     private val onCartClick: (PackageProduct, List<String>) -> Unit
@@ -52,6 +55,17 @@ class PackageProductAdapter(
                     onCartClick(pkg, selectedItems)
                 }
             }
+            binding.root.setOnClickListener { view ->
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val packageProduct = getItem(position)
+                    val activity = view.context as? FragmentActivity
+                    activity?.let { act ->
+                        val dialog = PackageDetailDialogFragment.newInstance(packageProduct)
+                        dialog.show(act.supportFragmentManager, "PackageDetailDialogFragment")
+                    }
+                }
+            }
         }
 
         fun bind(packageProduct: PackageProduct) {
@@ -60,9 +74,9 @@ class PackageProductAdapter(
                 packagePriceTextView.text = packageProduct.getFormattedPrice()
 
                 // Load image if available
-                packageProduct.imageData?.let { imageUrl ->
+                packageProduct.imageData?.let { imageData ->
                     Glide.with(packageImageView)
-                        .load(imageUrl) // Changed to load image URL directly
+                        .load(imageData) // Changed to load image URL directly
                         .centerCrop()
                         .into(packageImageView)
                 }
