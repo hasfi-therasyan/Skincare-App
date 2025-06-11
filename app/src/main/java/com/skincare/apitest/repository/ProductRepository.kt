@@ -5,11 +5,13 @@ import com.skincare.apitest.GetProductImageQuery
 import com.skincare.apitest.GetProductsQuery
 import com.skincare.apitest.GetPackagesQuery
 import com.skincare.apitest.GetPackageImageQuery
+import com.skincare.apitest.GetResellersQuery
 import com.skincare.apitest.model.ApiResponse
 import com.skincare.apitest.model.ApiType
 import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.model.PackageProductResponse
 import com.skincare.apitest.model.Product
+import com.skincare.apitest.model.Reseller
 import com.skincare.apitest.network.ApolloClientProvider
 import com.skincare.apitest.network.ProductService
 import com.skincare.apitest.network.RetrofitClientProvider
@@ -51,6 +53,41 @@ class ProductRepository {
                         } ?: emptyList()
                         emit(ApiResponse.Success(products))
                     }
+                }
+            }
+        } catch (e: Exception) {
+            emit(ApiResponse.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    suspend fun getResellers(apiType: ApiType): Flow<ApiResponse<List<Reseller>>> = flow {
+        emit(ApiResponse.Loading)
+        try {
+            when (apiType) {
+                ApiType.GRAPHQL -> {
+                    val response = apolloClient.query(com.skincare.apitest.GetResellersQuery()).execute()
+                    if (response.hasErrors()) {
+                        emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
+                    } else {
+                        val resellers = response.data?.resellers?.map { reseller ->
+                            Reseller(
+                                id = reseller.id.toInt(),
+                                shopName = reseller.shop_name,
+                                profilePictureUrl = reseller.profile_picture_url,
+                                resellerName = reseller.reseller_name,
+                                whatsappNumber = reseller.whatsapp_number,
+                                facebook = reseller.facebook,
+                                instagram = reseller.instagram,
+                                city = reseller.city,
+                                latitude = reseller.latitude,
+                                longitude = reseller.longitude
+                            )
+                        } ?: emptyList()
+                        emit(ApiResponse.Success(resellers))
+                    }
+                }
+                else -> {
+                    emit(ApiResponse.Error("Unsupported API type for getResellers"))
                 }
             }
         } catch (e: Exception) {

@@ -42,6 +42,29 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
+// REST API endpoint to get resellers
+app.get('/api/resellers', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, shop_name, profile_picture_url, reseller_name, whatsapp_number, facebook, instagram, city, latitude, longitude FROM resellers');
+    const resellers = result.rows.map(row => ({
+      id: row.id,
+      shop_name: row.shop_name,
+      profile_picture_url: row.profile_picture_url,
+      reseller_name: row.reseller_name,
+      whatsapp_number: row.whatsapp_number,
+      facebook: row.facebook,
+      instagram: row.instagram,
+      city: row.city,
+      latitude: row.latitude,
+      longitude: row.longitude,
+    }));
+    res.json({ resellers });
+  } catch (error) {
+    console.error('Error fetching resellers:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // REST API endpoint to get package products
 app.get('/api/packages', async (req, res) => {
   try {
@@ -146,6 +169,26 @@ const resolvers = {
       } catch (error) {
         console.error('Error fetching packages:', error);
         throw new Error('Failed to fetch packages');
+      }
+    },
+    resellers: async () => {
+      try {
+        const result = await pool.query('SELECT id, shop_name, profile_picture_url, reseller_name, whatsapp_number, facebook, instagram, city, latitude, longitude FROM resellers');
+        return result.rows.map(row => ({
+          id: row.id,
+          shop_name: row.shop_name,
+          profile_picture_url: row.profile_picture_url,
+          reseller_name: row.reseller_name,
+          whatsapp_number: row.whatsapp_number,
+          facebook: row.facebook,
+          instagram: row.instagram,
+          city: row.city,
+          latitude: row.latitude,
+          longitude: row.longitude,
+        }));
+      } catch (error) {
+        console.error('Error fetching resellers:', error);
+        throw new Error('Failed to fetch resellers');
       }
     },
     productImage: async (_, { id }) => {

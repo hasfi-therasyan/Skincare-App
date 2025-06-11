@@ -1,0 +1,14 @@
+query GetResellers {
+    resellers {
+        id
+        shop_name
+        profile_picture_url
+        reseller_name
+        whatsapp_number
+        facebook
+        instagram
+        city
+        latitude
+        longitude
+    }
+}

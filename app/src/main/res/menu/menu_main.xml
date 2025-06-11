@@ -8,4 +8,10 @@
         android:title="@string/cart"
         app:showAsAction="always"
         app:actionLayout="@layout/cart_action_view" />
+
+    <item
+        android:id="@+id/action_reseller_map"
+        android:icon="@drawable/reseller"
+        android:title="@string/reseller"
+        app:showAsAction="always" />
 </menu>

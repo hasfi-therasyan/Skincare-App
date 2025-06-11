@@ -3,6 +3,20 @@ type Query {
   productImage(id: ID!): ProductImage
   packages: [Package!]!
   packageImage(id: ID!): PackageImage
+  resellers: [Reseller!]!
+}
+
+type Reseller {
+  id: ID!
+  shop_name: String!
+  profile_picture_url: String
+  reseller_name: String!
+  whatsapp_number: String
+  facebook: String
+  instagram: String
+  city: String
+  latitude: Float!
+  longitude: Float!
 }
 
 type Product {

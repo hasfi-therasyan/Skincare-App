@@ -26,4 +26,5 @@
     <string name="cart">Cart</string>
     <string name="delete">delete</string>
     <string name="package_image">package_image\n</string>
+    <string name="reseller">reseller</string>
 </resources>

@@ -109,6 +109,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+            com.skincare.apitest.R.id.action_reseller_map -> {
+                // Navigate to ResellerMapActivity
+                val intent = Intent(this, com.skincare.apitest.ui.ResellerMapActivity::class.java)
+                startActivity(intent)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

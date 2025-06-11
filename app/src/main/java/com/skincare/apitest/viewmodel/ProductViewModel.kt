@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.asStateFlow
 import com.skincare.apitest.model.PackageProduct
+import com.skincare.apitest.model.Reseller
 import com.skincare.apitest.repository.CartRepository
 import com.skincare.apitest.repository.CartItem
 
@@ -22,6 +23,9 @@ class ProductViewModel : ViewModel() {
 
     private val _packageProductsState = MutableStateFlow<ApiResponse<List<PackageProduct>>>(ApiResponse.Loading)
     val packageProductsState: StateFlow<ApiResponse<List<PackageProduct>>> = _packageProductsState
+
+    private val _resellersState = MutableStateFlow<ApiResponse<List<Reseller>>>(ApiResponse.Loading)
+    val resellersState: StateFlow<ApiResponse<List<Reseller>>> = _resellersState
 
     private val _selectedApiType = MutableStateFlow(ApiType.RETROFIT)
     val selectedApiType: StateFlow<ApiType> = _selectedApiType
@@ -50,6 +54,14 @@ class ProductViewModel : ViewModel() {
         viewModelScope.launch {
             repository.getPackages(_selectedApiType.value).collect { response ->
                 _packageProductsState.value = response
+            }
+        }
+    }
+
+    fun fetchResellers() {
+        viewModelScope.launch {
+            repository.getResellers(_selectedApiType.value).collect { response ->
+                _resellersState.value = response
             }
         }
     }
