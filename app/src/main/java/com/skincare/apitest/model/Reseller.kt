@@ -1,14 +1,35 @@
 package com.skincare.apitest.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Reseller(
+    @SerializedName("id")
     val id: Int,
+
+    @SerializedName("shop_name")
     val shopName: String = "",
-    val profilePictureUrl: String?,
+
+    @SerializedName("profile_picture_url")
+    val profilePictureUrl: String? = null,
+
+    @SerializedName("reseller_name")
     val resellerName: String = "",
-    val whatsappNumber: String?,
-    val facebook: String?,
-    val instagram: String?,
-    val city: String?,
+
+    @SerializedName("whatsapp_number")
+    val whatsappNumber: String? = null,
+
+    @SerializedName("facebook")
+    val facebook: String? = null,
+
+    @SerializedName("instagram")
+    val instagram: String? = null,
+
+    @SerializedName("city")
+    val city: String? = null,
+
+    @SerializedName("latitude")
     val latitude: Double,
+
+    @SerializedName("longitude")
     val longitude: Double
 )

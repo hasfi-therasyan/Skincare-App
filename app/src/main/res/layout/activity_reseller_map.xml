@@ -23,4 +23,32 @@
         android:inputType="text"
         android:imeOptions="actionSearch" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/btn_zoom_in"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_menu_add"
+            android:contentDescription="@string/zoom_in"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        <ImageButton
+            android:id="@+id/btn_zoom_out"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_menu_minus"
+            android:contentDescription="@string/zoom_out"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
 </RelativeLayout>

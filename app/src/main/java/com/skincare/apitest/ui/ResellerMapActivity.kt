@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -31,6 +32,7 @@ import com.bumptech.glide.Glide
 import com.skincare.apitest.model.Reseller
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.lifecycle.ViewModelProvider
 import com.skincare.apitest.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
@@ -39,10 +41,11 @@ import java.util.Locale
 class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var searchProvinceEditText: EditText
+    private lateinit var btnZoomIn: ImageButton
+    private lateinit var btnZoomOut: ImageButton
 
     private lateinit var map: GoogleMap
     private lateinit var viewModel: ProductViewModel
-    private var userMarker: Marker? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val locationPermissionRequest = registerForActivityResult(
@@ -78,6 +81,10 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         loadResellers()
         map.setOnMarkerClickListener(this)
 
+        // Set initial view to Indonesia
+        val indonesia = LatLng(-2.5489, 118.0149)
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(indonesia, 5f))
+
         searchProvinceEditText = findViewById(R.id.search_province_edit_text)
 
         searchProvinceEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -88,7 +95,18 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             }
             false
         }
-        addUserLocationMarker()
+
+        // Setup zoom buttons
+        btnZoomIn = findViewById(R.id.btn_zoom_in)
+        btnZoomOut = findViewById(R.id.btn_zoom_out)
+
+        btnZoomIn.setOnClickListener {
+            map.animateCamera(CameraUpdateFactory.zoomIn())
+        }
+
+        btnZoomOut.setOnClickListener {
+            map.animateCamera(CameraUpdateFactory.zoomOut())
+        }
     }
 
     private fun enableUserLocation() {
@@ -106,8 +124,18 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
                 when (response) {
                     is ApiResponse.Loading -> { }
                     is ApiResponse.Success -> {
-                        response.data.forEach { reseller ->
-                            addResellerMarker(reseller)
+                        if (response.data.isEmpty()) {
+                            Toast.makeText(this@ResellerMapActivity, "No resellers found", Toast.LENGTH_SHORT).show()
+                        } else {
+                            response.data.forEach { reseller ->
+                                println("Reseller data: $reseller") // Debug log
+                                val marker = addResellerMarker(reseller)
+                                if (marker?.tag == null) {
+                                    Toast.makeText(this@ResellerMapActivity, "Failed to create marker for ${reseller.shopName}", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    println("Marker created with tag: ${marker.tag}") // Debug log
+                                }
+                            }
                         }
                     }
                     is ApiResponse.Error -> {
@@ -118,7 +146,19 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         }
     }
 
-    private fun addResellerMarker(reseller: Reseller) {
+    private fun addResellerMarker(reseller: Reseller): Marker? {
+        Log.d("ResellerDebug", """
+            Reseller Data:
+            ID: ${reseller.id}
+            Shop: ${reseller.shopName}
+            Name: ${reseller.resellerName}
+            WhatsApp: ${reseller.whatsappNumber}
+            Facebook: ${reseller.facebook}
+            Instagram: ${reseller.instagram}
+            City: ${reseller.city}
+            Location: ${reseller.latitude},${reseller.longitude}
+        """.trimIndent())
+
         val position = LatLng(reseller.latitude, reseller.longitude)
         val markerOptions = MarkerOptions()
             .position(position)
@@ -127,17 +167,21 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         val marker = map.addMarker(markerOptions)
         marker?.tag = reseller
+        return marker
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
+        println("Marker clicked with tag: ${marker.tag}") // Debug log
         val reseller = marker.tag as? Reseller
         if (reseller != null) {
+            println("Reseller data from marker: $reseller") // Debug log
             showResellerDetailsDialog(reseller)
             return true
         } else if (marker.tag == "user_location") {
             Toast.makeText(this, "You are here", Toast.LENGTH_SHORT).show()
             return true
         }
+        Toast.makeText(this, "Marker has no reseller data", Toast.LENGTH_SHORT).show()
         return false
     }
 
@@ -155,18 +199,53 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         val instagramTextView = dialogView.findViewById<TextView>(R.id.instagram)
         val cityTextView = dialogView.findViewById<TextView>(R.id.city)
 
-        Glide.with(this)
-            .load(reseller.profilePictureUrl)
-            .placeholder(R.drawable.ic_launcher_background) // Replace with your placeholder image
-            .error(R.drawable.ic_launcher_background) // Replace with your error image
-            .into(profilePictureImageView)
+        // Load profile picture if URL exists
+        if (!reseller.profilePictureUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(reseller.profilePictureUrl)
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .into(profilePictureImageView)
+        } else {
+            profilePictureImageView.setImageResource(R.drawable.ic_launcher_background)
+        }
 
-        shopNameTextView.text = String.format("Shop Name: %s", reseller.shopName)
-        resellerNameTextView.text = String.format("Reseller Name: %s", reseller.resellerName)
-        whatsappNumberTextView.text = String.format("WhatsApp: %s", reseller.whatsappNumber ?: "N/A")
-        facebookTextView.text = String.format("Facebook: %s", reseller.facebook ?: "N/A")
-        instagramTextView.text = String.format("Instagram: %s", reseller.instagram ?: "N/A")
-        cityTextView.text = String.format("City: %s", reseller.city ?: "N/A")
+        // Set text values with null checks
+        shopNameTextView.text = if (!reseller.shopName.isNullOrEmpty()) {
+            String.format("Shop Name: %s", reseller.shopName)
+        } else {
+            "Shop Name: Not available"
+        }
+
+        resellerNameTextView.text = if (!reseller.resellerName.isNullOrEmpty()) {
+            String.format("Reseller Name: %s", reseller.resellerName)
+        } else {
+            "Reseller Name: Not available"
+        }
+
+        whatsappNumberTextView.text = if (!reseller.whatsappNumber.isNullOrEmpty()) {
+            String.format("WhatsApp: %s", reseller.whatsappNumber)
+        } else {
+            "WhatsApp: Not available"
+        }
+
+        facebookTextView.text = if (!reseller.facebook.isNullOrEmpty()) {
+            String.format("Facebook: %s", reseller.facebook)
+        } else {
+            "Facebook: Not available"
+        }
+
+        instagramTextView.text = if (!reseller.instagram.isNullOrEmpty()) {
+            String.format("Instagram: %s", reseller.instagram)
+        } else {
+            "Instagram: Not available"
+        }
+
+        cityTextView.text = if (!reseller.city.isNullOrEmpty()) {
+            String.format("City: %s", reseller.city)
+        } else {
+            "City: Not available"
+        }
 
         builder.setTitle("Reseller Details")
             .setPositiveButton("OK") { dialog, _ ->
@@ -194,22 +273,7 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         }
     }
 
-    private fun addUserLocationMarker() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            return
-        }
-
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val userLatLng = LatLng(it.latitude, it.longitude)
-                    val markerOptions = MarkerOptions()
-                        .position(userLatLng)
-                        .title("You are here")
-                    val marker = map.addMarker(markerOptions)
-                    marker?.tag = "user_location"
-                }
-            }
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

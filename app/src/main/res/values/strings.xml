@@ -27,4 +27,7 @@
     <string name="delete">delete</string>
     <string name="package_image">package_image\n</string>
     <string name="reseller">reseller</string>
+    <string name="profile_picture">profile_picture</string>
+    <string name="zoom_in">zoom in\n</string>
+    <string name="zoom_out">zoom out</string>
 </resources>
