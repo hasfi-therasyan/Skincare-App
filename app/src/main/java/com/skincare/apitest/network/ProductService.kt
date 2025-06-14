@@ -2,6 +2,7 @@ package com.skincare.apitest.network
 
 import com.skincare.apitest.model.Product
 import com.skincare.apitest.model.ProductResponse
+import com.skincare.apitest.model.ResellerResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,6 +24,9 @@ interface ProductService {
 
     @GET("packages")
     suspend fun getPackages(): Response<PackageProductResponse>
+
+    @GET("resellers")
+    suspend fun getResellers(): Response<ResellerResponse>
 
     @GET("package/image/{id}")
     suspend fun getPackageImage(@Path("id") id: Int): Response<String>

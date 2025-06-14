@@ -12,9 +12,11 @@ import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.model.PackageProductResponse
 import com.skincare.apitest.model.Product
 import com.skincare.apitest.model.Reseller
+import com.skincare.apitest.model.ResellerResponse
 import com.skincare.apitest.network.ApolloClientProvider
 import com.skincare.apitest.network.ProductService
 import com.skincare.apitest.network.RetrofitClientProvider
+import com.skincare.apitest.network.await
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -64,8 +66,18 @@ class ProductRepository {
         emit(ApiResponse.Loading)
         try {
             when (apiType) {
+                ApiType.RETROFIT -> {
+                    val response = retrofitService.getResellers().await()
+                    if (response.isSuccessful) {
+                        response.body()?.let { resellerResponse ->
+                            emit(ApiResponse.Success(resellerResponse.resellers))
+                        } ?: emit(ApiResponse.Error("Empty response body"))
+                    } else {
+                        emit(ApiResponse.Error("Error: ${response.code()}"))
+                    }
+                }
                 ApiType.GRAPHQL -> {
-                    val response = apolloClient.query(com.skincare.apitest.GetResellersQuery()).execute()
+                    val response = apolloClient.query(GetResellersQuery()).execute()
                     if (response.hasErrors()) {
                         emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
                     } else {
@@ -85,9 +97,6 @@ class ProductRepository {
                         } ?: emptyList()
                         emit(ApiResponse.Success(resellers))
                     }
-                }
-                else -> {
-                    emit(ApiResponse.Error("Unsupported API type for getResellers"))
                 }
             }
         } catch (e: Exception) {
