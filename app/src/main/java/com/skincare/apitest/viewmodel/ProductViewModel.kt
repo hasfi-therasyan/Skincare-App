@@ -66,13 +66,6 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-    fun fetchProductImage(productId: Int) {
-        viewModelScope.launch {
-            repository.getProductImage(productId, _selectedApiType.value).collect { response ->
-                _currentImageState.value = response
-            }
-        }
-    }
 
     fun clearCurrentImage() {
         _currentImageState.value = null

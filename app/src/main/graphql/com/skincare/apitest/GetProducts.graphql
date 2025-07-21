@@ -7,9 +7,3 @@ query GetProducts {
     image_data
   }
 }
-
-query GetProductImage($id: ID!) {
-  productImage(id: $id) {
-    image_data
-  }
-}

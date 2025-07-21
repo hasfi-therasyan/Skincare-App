@@ -4,12 +4,6 @@ query GetPackages {
     packageName
     items
     price
-    image
-  }
-}
-
-query GetPackageImage($id: ID!) {
-  packageImage(id: $id) {
     image_data
   }
 }

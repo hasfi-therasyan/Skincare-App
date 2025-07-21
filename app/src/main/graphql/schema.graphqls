@@ -1,22 +1,7 @@
 type Query {
   products: [Product!]!
-  productImage(id: ID!): ProductImage
   packages: [Package!]!
-  packageImage(id: ID!): PackageImage
   resellers: [Reseller!]!
-}
-
-type Reseller {
-  id: ID!
-  shop_name: String!
-  profile_picture_url: String
-  reseller_name: String!
-  whatsapp_number: String
-  facebook: String
-  instagram: String
-  city: String
-  latitude: Float!
-  longitude: Float!
 }
 
 type Product {
@@ -24,11 +9,7 @@ type Product {
   product_name: String!
   description: String!
   price: Float!
-  image_data: String
-}
-
-type ProductImage {
-  image_data: String!
+  image_data: String  # Ubah dari image_data ke image_url
 }
 
 type Package {
@@ -36,9 +17,18 @@ type Package {
   packageName: String!
   items: [String!]!
   price: Float!
-  image: String
+  image_data: String  # Ubah dari image ke image_url
 }
 
-type PackageImage {
-  image_data: String!
+type Reseller {
+  id: ID!
+  shop_name: String!
+  profile_picture_url: String  # Konsisten dengan naming
+  reseller_name: String!
+  whatsapp_number: String
+  facebook: String
+  instagram: String
+  city: String
+  latitude: Float!
+  longitude: Float!
 }

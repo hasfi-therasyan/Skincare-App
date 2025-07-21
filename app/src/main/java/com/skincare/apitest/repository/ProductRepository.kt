@@ -1,10 +1,8 @@
 package com.skincare.apitest.repository
 
 import com.apollographql.apollo3.exception.ApolloException
-import com.skincare.apitest.GetProductImageQuery
 import com.skincare.apitest.GetProductsQuery
 import com.skincare.apitest.GetPackagesQuery
-import com.skincare.apitest.GetPackageImageQuery
 import com.skincare.apitest.GetResellersQuery
 import com.skincare.apitest.model.ApiResponse
 import com.skincare.apitest.model.ApiType
@@ -104,38 +102,6 @@ class ProductRepository {
         }
     }
 
-    fun getProductImage(id: Int, apiType: ApiType): Flow<ApiResponse<String>> = flow {
-        emit(ApiResponse.Loading)
-        try {
-            when (apiType) {
-                ApiType.RETROFIT -> {
-                    val response = retrofitService.getProductImage(id)
-                    if (response.isSuccessful) {
-                        response.body()?.let { imageData ->
-                            emit(ApiResponse.Success(imageData))
-                        } ?: emit(ApiResponse.Error("Empty image data"))
-                    } else {
-                        emit(ApiResponse.Error("Error: ${response.code()}"))
-                    }
-                }
-                ApiType.GRAPHQL -> {
-                    val response = apolloClient.query(GetProductImageQuery(id.toString())).execute()
-                    if (response.hasErrors()) {
-                        emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
-                    } else {
-                        val imageData = response.data?.productImage?.image_data
-                        if (imageData != null) {
-                            emit(ApiResponse.Success(imageData))
-                        } else {
-                            emit(ApiResponse.Error("Image not found"))
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            emit(ApiResponse.Error(e.message ?: "Unknown error occurred"))
-        }
-    }
 
     fun getPackages(apiType: ApiType): Flow<ApiResponse<List<PackageProduct>>> = flow {
         emit(ApiResponse.Loading)
@@ -162,7 +128,7 @@ class ProductRepository {
                                 packageName = pkg.packageName,
                                 items = pkg.items ?: emptyList(),
                                 price = pkg.price,
-                                imageData = pkg.image
+                                imageData = pkg.image_data
                             )
                         } ?: emptyList()
                         emit(ApiResponse.Success(packages))
@@ -174,36 +140,4 @@ class ProductRepository {
         }
     }
 
-    fun getPackageImage(id: Int, apiType: ApiType): Flow<ApiResponse<String>> = flow {
-        emit(ApiResponse.Loading)
-        try {
-            when (apiType) {
-                ApiType.RETROFIT -> {
-                    val response = retrofitService.getPackageImage(id)
-                    if (response.isSuccessful) {
-                        response.body()?.let { imageData ->
-                            emit(ApiResponse.Success(imageData))
-                        } ?: emit(ApiResponse.Error("Empty image data"))
-                    } else {
-                        emit(ApiResponse.Error("Error: ${response.code()}"))
-                    }
-                }
-                ApiType.GRAPHQL -> {
-                    val response = apolloClient.query(GetPackageImageQuery(id.toString())).execute()
-                    if (response.hasErrors()) {
-                        emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
-                    } else {
-                        val imageData = response.data?.packageImage?.image_data
-                        if (imageData != null) {
-                            emit(ApiResponse.Success(imageData))
-                        } else {
-                            emit(ApiResponse.Error("Image not found"))
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            emit(ApiResponse.Error(e.message ?: "Unknown error occurred"))
-        }
-    }
 }
