@@ -23,9 +23,9 @@ An Android application that demonstrates **dual API implementation** (REST and G
 ### **Enhanced Reseller Map Features**
 - ✅ **Limited Reseller Loading**: Load up to 300 random resellers on map initialization
 - ✅ **Search Capability**:
-    - By **Reseller Name** (full database search)
-    - By **City** (full database search)
-    - By **Province** (with zoom functionality using Geocoder)
+  - By **Reseller Name** (full database search)
+  - By **City** (full database search)
+  - By **Province** (with zoom functionality using Geocoder)
 - ✅ **Search Filter Dropdown**: Select between **Reseller Name** and **City**
 - ✅ **Search Results Dialog**: Shows up to 50 results with clickable navigation
 - ✅ **Smart Zooming**: Automatically zooms to reseller or province on result tap
@@ -51,26 +51,24 @@ An Android application that demonstrates **dual API implementation** (REST and G
 
 ## 📁 Project Structure
 
+```
 Skincare-App/
 ├── app/
-│ └── src/main/
-│ ├── java/com/skincare/apitest/
-│ │ ├── model/ # Data models
-│ │ ├── network/ # Retrofit & Apollo clients
-│ │ ├── repository/ # Repository layer (both APIs)
-│ │ ├── ui/ # UI components
-│ │ ├── viewmodel/ # ViewModels
-│ │ └── MainActivity.kt
-│ ├── graphql/ # GraphQL queries & schema
-│ └── res/ # UI resources
+│   └── src/main/
+│       ├── java/com/skincare/apitest/
+│       │   ├── model/           # Data models
+│       │   ├── network/         # Retrofit & Apollo clients
+│       │   ├── repository/      # Repository layer (both APIs)
+│       │   ├── ui/              # UI components
+│       │   ├── viewmodel/       # ViewModels
+│       │   └── MainActivity.kt
+│       ├── graphql/             # GraphQL queries & schema
+│       └── res/                 # UI resources
 ├── backend/
-│ └── server.js # Express server with REST & GraphQL
-├── schema.graphqls # GraphQL schema
+│   └── server.js                # Express server with REST & GraphQL
+├── schema.graphqls              # GraphQL schema
 └── README.md
-
-pgsql
-Copy
-Edit
+```
 
 ---
 
@@ -109,24 +107,22 @@ CREATE TABLE resellers (
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL
 );
-🔌 API Endpoints
-REST API
-GET /api/products/individual
+```
 
-GET /api/products/package
+---
 
-GET /api/resellers/limited → (Random 300 resellers)
+## 🔌 API Endpoints
 
-GET /api/resellers/search?name=...
+### **REST API**
+- `GET /api/products/individual`
+- `GET /api/products/package`
+- `GET /api/resellers/limited` → *(Random 300 resellers)*
+- `GET /api/resellers/search?name=...`
+- `GET /api/resellers/search?city=...`
 
-GET /api/resellers/search?city=...
-
-GraphQL
-POST /graphql
-
-graphql
-Copy
-Edit
+### **GraphQL**
+- `POST /graphql`
+```graphql
 query {
   limitedResellers {
     id
@@ -142,11 +138,14 @@ query {
     ...
   }
 }
-🚀 Quick Setup
-1. Backend Setup
-bash
-Copy
-Edit
+```
+
+---
+
+## 🚀 Quick Setup
+
+### 1. Backend Setup
+```bash
 cd Skincare-App/backend
 npm install
 
@@ -154,17 +153,17 @@ npm install
 # Create database: 'skincare_app'
 
 node server.js
-2. Android Setup
-bash
-Copy
-Edit
+```
+
+### 2. Android Setup
+```bash
 # Open project in Android Studio
 # Ensure base URLs are correct
 # Build and run the app
-3. Configuration
-javascript
-Copy
-Edit
+```
+
+### 3. Configuration
+```javascript
 // backend/server.js
 const pool = new Pool({
   user: 'postgres',
@@ -173,17 +172,20 @@ const pool = new Pool({
   password: 'password',
   port: 5432,
 });
-kotlin
-Copy
-Edit
+```
+
+```kotlin
 // Android config
 val REST_BASE_URL = "http://10.0.2.2:4000/api/"
 val GRAPHQL_URL = "http://10.0.2.2:4000/graphql"
-📊 API Comparison Architecture
-Layer Design
-kotlin
-Copy
-Edit
+```
+
+---
+
+## 📊 API Comparison Architecture
+
+### Layer Design
+```kotlin
 class ProductRepository {
     val retrofit = RetrofitClientProvider.getRetrofitClient()
     val apollo = ApolloClientProvider.getApolloClient()
@@ -195,70 +197,62 @@ class ProductRepository {
         }
     }
 }
-🎯 Usage Guide
-1. Launch the App
-Select API type (REST/GraphQL)
+```
 
-2. Test Features
-Product & package listings
+---
 
-Reseller map view
+## 🎯 Usage Guide
 
-3. Try Search & Comparison
-Use province search bar
+### 1. Launch the App
+- Select API type (REST/GraphQL)
 
-Use Reseller Name / City dropdown search
+### 2. Test Features
+- Product & package listings
+- Reseller map view
 
-View map results and details dialog
+### 3. Try Search & Comparison
+- Use **province search bar**
+- Use **Reseller Name / City** dropdown search
+- View **map results** and **details dialog**
 
-🔍 Troubleshooting
-Common Issues
-400 Bad Request (GraphQL)
-Check for schema/field mismatch
+---
 
-Database Not Connecting
-Ensure PostgreSQL is active on port 5432
+## 🔍 Troubleshooting
 
-Android Emulator Network
-Use 10.0.2.2 instead of localhost
+### Common Issues
 
-📦 Contribution Guide
-Fork this repo
+#### 400 Bad Request (GraphQL)
+- Check for schema/field mismatch
 
-Create a branch: feature/YourFeatureName
+#### Database Not Connecting
+- Ensure PostgreSQL is active on port `5432`
 
-Commit your changes
+#### Android Emulator Network
+- Use `10.0.2.2` instead of `localhost`
 
-Push and open a PR
+---
 
-📄 License
-This project is licensed under the MIT License – see the LICENSE file.
+## 📦 Contribution Guide
 
-🎓 Educational Purpose
+1. Fork this repo
+2. Create a branch: `feature/YourFeatureName`
+3. Commit your changes
+4. Push and open a PR
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file.
+
+---
+
+## 🎓 Educational Purpose
+
 This project is built for learning and exploration:
+- 🔄 REST vs GraphQL side-by-side
+- 🧱 MVVM + Repository pattern
+- 📱 Modern Android with clean UI
+- 🗃️ PostgreSQL database integration
 
-🔄 REST vs GraphQL side-by-side
-
-🧱 MVVM + Repository pattern
-
-📱 Modern Android with clean UI
-
-🗃️ PostgreSQL database integration
-
-✅ Update Summary:
-
-Added endpoints for:
-
-GET /api/resellers/limited
-
-search by reseller name
-
-search by city
-
-Added frontend features for:
-
-Province zoom
-
-Dropdown search type
-
-Search results dialog (up to 50)
+---
