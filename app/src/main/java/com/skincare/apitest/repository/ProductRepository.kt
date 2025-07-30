@@ -4,6 +4,9 @@ import com.apollographql.apollo3.exception.ApolloException
 import com.skincare.apitest.GetProductsQuery
 import com.skincare.apitest.GetPackagesQuery
 import com.skincare.apitest.GetResellersQuery
+import com.skincare.apitest.GetLimitedResellersQuery
+import com.skincare.apitest.SearchResellersByNameQuery
+import com.skincare.apitest.SearchResellersByCityQuery
 import com.skincare.apitest.model.ApiResponse
 import com.skincare.apitest.model.ApiType
 import com.skincare.apitest.model.PackageProduct
@@ -80,6 +83,132 @@ class ProductRepository {
                         emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
                     } else {
                         val resellers = response.data?.resellers?.map { reseller ->
+                            Reseller(
+                                id = reseller.id.toInt(),
+                                shopName = reseller.shop_name,
+                                profilePictureUrl = reseller.profile_picture_url,
+                                resellerName = reseller.reseller_name,
+                                whatsappNumber = reseller.whatsapp_number,
+                                facebook = reseller.facebook,
+                                instagram = reseller.instagram,
+                                city = reseller.city,
+                                latitude = reseller.latitude,
+                                longitude = reseller.longitude
+                            )
+                        } ?: emptyList()
+                        emit(ApiResponse.Success(resellers))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            emit(ApiResponse.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    suspend fun getLimitedResellers(apiType: ApiType): Flow<ApiResponse<List<Reseller>>> = flow {
+        emit(ApiResponse.Loading)
+        try {
+            when (apiType) {
+                ApiType.RETROFIT -> {
+                    val response = retrofitService.getLimitedResellers().await()
+                    if (response.isSuccessful) {
+                        response.body()?.let { resellerResponse ->
+                            emit(ApiResponse.Success(resellerResponse.resellers))
+                        } ?: emit(ApiResponse.Error("Empty response body"))
+                    } else {
+                        emit(ApiResponse.Error("Error: ${response.code()}"))
+                    }
+                }
+                ApiType.GRAPHQL -> {
+                    val response = apolloClient.query(GetLimitedResellersQuery()).execute()
+                    if (response.hasErrors()) {
+                        emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
+                    } else {
+                        val resellers = response.data?.limitedResellers?.map { reseller ->
+                            Reseller(
+                                id = reseller.id.toInt(),
+                                shopName = reseller.shop_name,
+                                profilePictureUrl = reseller.profile_picture_url,
+                                resellerName = reseller.reseller_name,
+                                whatsappNumber = reseller.whatsapp_number,
+                                facebook = reseller.facebook,
+                                instagram = reseller.instagram,
+                                city = reseller.city,
+                                latitude = reseller.latitude,
+                                longitude = reseller.longitude
+                            )
+                        } ?: emptyList()
+                        emit(ApiResponse.Success(resellers))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            emit(ApiResponse.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    suspend fun searchResellersByName(query: String, apiType: ApiType): Flow<ApiResponse<List<Reseller>>> = flow {
+        emit(ApiResponse.Loading)
+        try {
+            when (apiType) {
+                ApiType.RETROFIT -> {
+                    val response = retrofitService.searchResellersByName(query).await()
+                    if (response.isSuccessful) {
+                        response.body()?.let { resellerResponse ->
+                            emit(ApiResponse.Success(resellerResponse.resellers))
+                        } ?: emit(ApiResponse.Error("Empty response body"))
+                    } else {
+                        emit(ApiResponse.Error("Error: ${response.code()}"))
+                    }
+                }
+                ApiType.GRAPHQL -> {
+                    val response = apolloClient.query(SearchResellersByNameQuery(query)).execute()
+                    if (response.hasErrors()) {
+                        emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
+                    } else {
+                        val resellers = response.data?.searchResellersByName?.map { reseller ->
+                            Reseller(
+                                id = reseller.id.toInt(),
+                                shopName = reseller.shop_name,
+                                profilePictureUrl = reseller.profile_picture_url,
+                                resellerName = reseller.reseller_name,
+                                whatsappNumber = reseller.whatsapp_number,
+                                facebook = reseller.facebook,
+                                instagram = reseller.instagram,
+                                city = reseller.city,
+                                latitude = reseller.latitude,
+                                longitude = reseller.longitude
+                            )
+                        } ?: emptyList()
+                        emit(ApiResponse.Success(resellers))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            emit(ApiResponse.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    suspend fun searchResellersByCity(query: String, apiType: ApiType): Flow<ApiResponse<List<Reseller>>> = flow {
+        emit(ApiResponse.Loading)
+        try {
+            when (apiType) {
+                ApiType.RETROFIT -> {
+                    val response = retrofitService.searchResellersByCity(query).await()
+                    if (response.isSuccessful) {
+                        response.body()?.let { resellerResponse ->
+                            emit(ApiResponse.Success(resellerResponse.resellers))
+                        } ?: emit(ApiResponse.Error("Empty response body"))
+                    } else {
+                        emit(ApiResponse.Error("Error: ${response.code()}"))
+                    }
+                }
+                ApiType.GRAPHQL -> {
+                    val response = apolloClient.query(SearchResellersByCityQuery(query)).execute()
+                    if (response.hasErrors()) {
+                        emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
+                    } else {
+                        val resellers = response.data?.searchResellersByCity?.map { reseller ->
                             Reseller(
                                 id = reseller.id.toInt(),
                                 shopName = reseller.shop_name,

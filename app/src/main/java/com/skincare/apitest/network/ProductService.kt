@@ -28,6 +28,15 @@ interface ProductService {
     @GET("resellers")
     suspend fun getResellers(): Response<ResellerResponse>
 
+    @GET("resellers/limited")
+    suspend fun getLimitedResellers(): Response<ResellerResponse>
+
+    @GET("resellers/search/name/{query}")
+    suspend fun searchResellersByName(@Path("query") query: String): Response<ResellerResponse>
+
+    @GET("resellers/search/city/{query}")
+    suspend fun searchResellersByCity(@Path("query") query: String): Response<ResellerResponse>
+
     @GET("package/image/{id}")
     suspend fun getPackageImage(@Path("id") id: Int): Response<String>
 

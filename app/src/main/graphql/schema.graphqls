@@ -2,8 +2,10 @@ type Query {
   products: [Product!]!
   packages: [Package!]!
   resellers: [Reseller!]!
+  limitedResellers: [Reseller!]!
+  searchResellersByName(query: String!): [Reseller!]!
+  searchResellersByCity(query: String!): [Reseller!]!
 }
-
 type Product {
   id: ID!
   product_name: String!

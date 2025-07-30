@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.skincare.apitest.R
 import com.skincare.apitest.model.ApiResponse
 import android.location.Location
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -31,8 +32,13 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.skincare.apitest.model.Reseller
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Spinner
+import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.ViewModelProvider
 import com.skincare.apitest.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
@@ -43,6 +49,10 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     private lateinit var searchProvinceEditText: EditText
     private lateinit var btnZoomIn: ImageButton
     private lateinit var btnZoomOut: ImageButton
+
+    private lateinit var searchTypeSpinner: Spinner
+    private lateinit var searchQueryEditText: EditText
+    private lateinit var searchButton: Button
 
     private lateinit var map: GoogleMap
     private lateinit var viewModel: ProductViewModel
@@ -69,23 +79,27 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             .findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Load resellers when the activity is created
-        loadResellers()
+        searchProvinceEditText = findViewById(R.id.search_province_edit_text)
+        btnZoomIn = findViewById(R.id.btn_zoom_in)
+        btnZoomOut = findViewById(R.id.btn_zoom_out)
+        searchTypeSpinner = findViewById(R.id.search_type_spinner)
+        searchQueryEditText = findViewById(R.id.search_query_edit_text)
+        searchButton = findViewById(R.id.search_button)
 
-        // TODO: Setup search bar and observe resellers data
+        setupSearchSpinner()
+        setupSearchFunctionality()
+
+        loadLimitedResellers()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         enableUserLocation()
-        loadResellers()
+        loadLimitedResellers()
         map.setOnMarkerClickListener(this)
 
-        // Set initial view to Indonesia
         val indonesia = LatLng(-2.5489, 118.0149)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(indonesia, 5f))
-
-        searchProvinceEditText = findViewById(R.id.search_province_edit_text)
 
         searchProvinceEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -95,10 +109,6 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             }
             false
         }
-
-        // Setup zoom buttons
-        btnZoomIn = findViewById(R.id.btn_zoom_in)
-        btnZoomOut = findViewById(R.id.btn_zoom_out)
 
         btnZoomIn.setOnClickListener {
             map.animateCamera(CameraUpdateFactory.zoomIn())
@@ -117,25 +127,15 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         }
     }
 
-    private fun loadResellers() {
+    private fun loadLimitedResellers() {
         lifecycleScope.launch {
-            viewModel.fetchResellers()
-            viewModel.resellersState.collect { response ->
+            viewModel.fetchLimitedResellers()
+            viewModel.limitedResellersState.collect { response ->
                 when (response) {
                     is ApiResponse.Loading -> { }
                     is ApiResponse.Success -> {
-                        if (response.data.isEmpty()) {
-                            Toast.makeText(this@ResellerMapActivity, "No resellers found", Toast.LENGTH_SHORT).show()
-                        } else {
-                            response.data.forEach { reseller ->
-                                println("Reseller data: $reseller") // Debug log
-                                val marker = addResellerMarker(reseller)
-                                if (marker?.tag == null) {
-                                    Toast.makeText(this@ResellerMapActivity, "Failed to create marker for ${reseller.shopName}", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    println("Marker created with tag: ${marker.tag}") // Debug log
-                                }
-                            }
+                        response.data.forEach { reseller ->
+                            addResellerMarker(reseller)
                         }
                     }
                     is ApiResponse.Error -> {
@@ -147,23 +147,11 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     }
 
     private fun addResellerMarker(reseller: Reseller): Marker? {
-        Log.d("ResellerDebug", """
-            Reseller Data:
-            ID: ${reseller.id}
-            Shop: ${reseller.shopName}
-            Name: ${reseller.resellerName}
-            WhatsApp: ${reseller.whatsappNumber}
-            Facebook: ${reseller.facebook}
-            Instagram: ${reseller.instagram}
-            City: ${reseller.city}
-            Location: ${reseller.latitude},${reseller.longitude}
-        """.trimIndent())
-
         val position = LatLng(reseller.latitude, reseller.longitude)
         val markerOptions = MarkerOptions()
             .position(position)
             .title(reseller.shopName)
-            .snippet("Reseller: ${reseller.resellerName}\\nCity: ${reseller.city}")
+            .snippet("Reseller: ${reseller.resellerName}\nCity: ${reseller.city}")
             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         val marker = map.addMarker(markerOptions)
         marker?.tag = reseller
@@ -171,18 +159,96 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        println("Marker clicked with tag: ${marker.tag}") // Debug log
         val reseller = marker.tag as? Reseller
         if (reseller != null) {
-            println("Reseller data from marker: $reseller") // Debug log
             showResellerDetailsDialog(reseller)
             return true
-        } else if (marker.tag == "user_location") {
-            Toast.makeText(this, "You are here", Toast.LENGTH_SHORT).show()
-            return true
         }
-        Toast.makeText(this, "Marker has no reseller data", Toast.LENGTH_SHORT).show()
         return false
+    }
+
+    private fun setupSearchSpinner() {
+        val searchOptions = arrayOf("Reseller Name", "City")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, searchOptions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        searchTypeSpinner.adapter = adapter
+    }
+
+    private fun setupSearchFunctionality() {
+        searchButton.setOnClickListener {
+            val query = searchQueryEditText.text.toString().trim()
+            if (query.isNotEmpty()) {
+                val selectedSearchType = searchTypeSpinner.selectedItem.toString()
+                performSearch(query, selectedSearchType)
+            } else {
+                Toast.makeText(this, "Please enter a search query", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        searchQueryEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = searchQueryEditText.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    val selectedSearchType = searchTypeSpinner.selectedItem.toString()
+                    performSearch(query, selectedSearchType)
+                }
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+    }
+
+    private fun performSearch(query: String, searchType: String) {
+        lifecycleScope.launch {
+            when (searchType) {
+                "Reseller Name" -> viewModel.searchResellersByName(query)
+                "City" -> viewModel.searchResellersByCity(query)
+            }
+
+            viewModel.searchResultsState.collect { response ->
+                when (response) {
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {
+                        showSearchResultsDialog(response.data, searchType, query)
+                    }
+                    is ApiResponse.Error -> {
+                        Toast.makeText(this@ResellerMapActivity, "Search failed: ${response.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showSearchResultsDialog(results: List<Reseller>, searchType: String, query: String) {
+        val builder = AlertDialog.Builder(this)
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.dialog_search_results, null)
+        builder.setView(dialogView)
+
+        val titleTextView = dialogView.findViewById<TextView>(R.id.search_results_title)
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.search_results_recycler_view)
+        val noResultsText = dialogView.findViewById<TextView>(R.id.no_results_text)
+
+        titleTextView.text = "Search Results for \"$query\" in $searchType"
+
+        if (results.isEmpty()) {
+            recyclerView.visibility = android.view.View.GONE
+            noResultsText.visibility = android.view.View.VISIBLE
+        } else {
+            recyclerView.visibility = android.view.View.VISIBLE
+            noResultsText.visibility = android.view.View.GONE
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.adapter = SearchResultsAdapter(results) { reseller ->
+                val position = LatLng(reseller.latitude, reseller.longitude)
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
+                showResellerDetailsDialog(reseller)
+            }
+        }
+
+        builder.setTitle("Search Results")
+            .setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
+
+        builder.create().show()
     }
 
     private fun showResellerDetailsDialog(reseller: Reseller) {
@@ -199,61 +265,23 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         val instagramTextView = dialogView.findViewById<TextView>(R.id.instagram)
         val cityTextView = dialogView.findViewById<TextView>(R.id.city)
 
-        // Load profile picture if URL exists
-        if (!reseller.profilePictureUrl.isNullOrEmpty()) {
-            Glide.with(this)
-                .load(reseller.profilePictureUrl)
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
-                .into(profilePictureImageView)
-        } else {
-            profilePictureImageView.setImageResource(R.drawable.ic_launcher_background)
-        }
+        Glide.with(this)
+            .load(reseller.profilePictureUrl ?: "")
+            .placeholder(R.drawable.ic_launcher_background)
+            .error(R.drawable.ic_launcher_background)
+            .into(profilePictureImageView)
 
-        // Set text values with null checks
-        shopNameTextView.text = if (!reseller.shopName.isNullOrEmpty()) {
-            String.format("Shop Name: %s", reseller.shopName)
-        } else {
-            "Shop Name: Not available"
-        }
-
-        resellerNameTextView.text = if (!reseller.resellerName.isNullOrEmpty()) {
-            String.format("Reseller Name: %s", reseller.resellerName)
-        } else {
-            "Reseller Name: Not available"
-        }
-
-        whatsappNumberTextView.text = if (!reseller.whatsappNumber.isNullOrEmpty()) {
-            String.format("WhatsApp: %s", reseller.whatsappNumber)
-        } else {
-            "WhatsApp: Not available"
-        }
-
-        facebookTextView.text = if (!reseller.facebook.isNullOrEmpty()) {
-            String.format("Facebook: %s", reseller.facebook)
-        } else {
-            "Facebook: Not available"
-        }
-
-        instagramTextView.text = if (!reseller.instagram.isNullOrEmpty()) {
-            String.format("Instagram: %s", reseller.instagram)
-        } else {
-            "Instagram: Not available"
-        }
-
-        cityTextView.text = if (!reseller.city.isNullOrEmpty()) {
-            String.format("City: %s", reseller.city)
-        } else {
-            "City: Not available"
-        }
+        shopNameTextView.text = "Shop Name: ${reseller.shopName ?: "Not available"}"
+        resellerNameTextView.text = "Reseller Name: ${reseller.resellerName ?: "Not available"}"
+        whatsappNumberTextView.text = "WhatsApp: ${reseller.whatsappNumber ?: "Not available"}"
+        facebookTextView.text = "Facebook: ${reseller.facebook ?: "Not available"}"
+        instagramTextView.text = "Instagram: ${reseller.instagram ?: "Not available"}"
+        cityTextView.text = "City: ${reseller.city ?: "Not available"}"
 
         builder.setTitle("Reseller Details")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
 
-        val dialog = builder.create()
-        dialog.show()
+        builder.create().show()
     }
 
     private fun searchProvince(provinceName: String) {
@@ -277,3 +305,49 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         super.onDestroy()
     }
 }
+class SearchResultsAdapter(
+    private val resellers: List<Reseller>,
+    private val onItemClick: (Reseller) -> Unit
+) : RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
+
+    inner class ViewHolder(view: android.view.View) : RecyclerView.ViewHolder(view) {
+        val profilePicture: ImageView = view.findViewById(R.id.profile_picture)
+        val shopName: TextView = view.findViewById(R.id.shop_name)
+        val resellerName: TextView = view.findViewById(R.id.reseller_name)
+        val city: TextView = view.findViewById(R.id.city)
+
+        init {
+            view.setOnClickListener {
+                val reseller = resellers[adapterPosition]
+                onItemClick(reseller)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_search_result, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val reseller = resellers[position]
+
+        holder.shopName.text = reseller.shopName ?: "Unknown"
+        holder.resellerName.text = reseller.resellerName ?: "Unknown"
+        holder.city.text = reseller.city ?: "City not available"
+
+        if (!reseller.profilePictureUrl.isNullOrEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(reseller.profilePictureUrl)
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .into(holder.profilePicture)
+        } else {
+            holder.profilePicture.setImageResource(R.drawable.ic_launcher_background)
+        }
+    }
+
+    override fun getItemCount(): Int = resellers.size
+}
+

@@ -24,6 +24,12 @@ class ProductViewModel : ViewModel() {
     private val _packageProductsState = MutableStateFlow<ApiResponse<List<PackageProduct>>>(ApiResponse.Loading)
     val packageProductsState: StateFlow<ApiResponse<List<PackageProduct>>> = _packageProductsState
 
+    private val _limitedResellersState = MutableStateFlow<ApiResponse<List<Reseller>>>(ApiResponse.Loading)
+    val limitedResellersState: StateFlow<ApiResponse<List<Reseller>>> = _limitedResellersState
+
+    private val _searchResultsState = MutableStateFlow<ApiResponse<List<Reseller>>>(ApiResponse.Loading)
+    val searchResultsState: StateFlow<ApiResponse<List<Reseller>>> = _searchResultsState
+
     private val _resellersState = MutableStateFlow<ApiResponse<List<Reseller>>>(ApiResponse.Loading)
     val resellersState: StateFlow<ApiResponse<List<Reseller>>> = _resellersState
 
@@ -62,6 +68,30 @@ class ProductViewModel : ViewModel() {
         viewModelScope.launch {
             repository.getResellers(_selectedApiType.value).collect { response ->
                 _resellersState.value = response
+            }
+        }
+    }
+
+    fun fetchLimitedResellers() {
+        viewModelScope.launch {
+            repository.getLimitedResellers(_selectedApiType.value).collect { response ->
+                _limitedResellersState.value = response
+            }
+        }
+    }
+
+    fun searchResellersByName(query: String) {
+        viewModelScope.launch {
+            repository.searchResellersByName(query, _selectedApiType.value).collect { response ->
+                _searchResultsState.value = response
+            }
+        }
+    }
+
+    fun searchResellersByCity(query: String) {
+        viewModelScope.launch {
+            repository.searchResellersByCity(query, _selectedApiType.value).collect { response ->
+                _searchResultsState.value = response
             }
         }
     }
