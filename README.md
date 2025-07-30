@@ -2,6 +2,8 @@
 
 An Android application that demonstrates **dual API implementation** (REST and GraphQL) for fetching skincare products from a PostgreSQL database, designed for **fair performance comparison**.
 
+---
+
 ## 🚀 Features
 
 ### **Core Features**
@@ -18,6 +20,18 @@ An Android application that demonstrates **dual API implementation** (REST and G
 - **Unified Error Handling**: Consistent error responses across APIs
 - **Performance Metrics**: Built-in timing for API comparison
 
+### **Enhanced Reseller Map Features**
+- ✅ **Limited Reseller Loading**: Load up to 300 random resellers on map initialization
+- ✅ **Search Capability**:
+    - By **Reseller Name** (full database search)
+    - By **City** (full database search)
+    - By **Province** (with zoom functionality using Geocoder)
+- ✅ **Search Filter Dropdown**: Select between **Reseller Name** and **City**
+- ✅ **Search Results Dialog**: Shows up to 50 results with clickable navigation
+- ✅ **Smart Zooming**: Automatically zooms to reseller or province on result tap
+
+---
+
 ## 🛠 Tech Stack
 
 ### **Backend**
@@ -33,26 +47,32 @@ An Android application that demonstrates **dual API implementation** (REST and G
 - **Glide** for image loading
 - **Material Design Components**
 
+---
+
 ## 📁 Project Structure
 
-```
 Skincare-App/
 ├── app/
-│   └── src/main/
-│       ├── java/com/skincare/apitest/
-│       │   ├── model/           # Data models
-│       │   ├── network/         # Retrofit & Apollo clients
-│       │   ├── repository/      # Repository layer (both APIs)
-│       │   ├── ui/             # UI components
-│       │   ├── viewmodel/      # ViewModels
-│       │   └── MainActivity.kt
-│       ├── graphql/            # GraphQL queries & schema
-│       └── res/               # UI resources
+│ └── src/main/
+│ ├── java/com/skincare/apitest/
+│ │ ├── model/ # Data models
+│ │ ├── network/ # Retrofit & Apollo clients
+│ │ ├── repository/ # Repository layer (both APIs)
+│ │ ├── ui/ # UI components
+│ │ ├── viewmodel/ # ViewModels
+│ │ └── MainActivity.kt
+│ ├── graphql/ # GraphQL queries & schema
+│ └── res/ # UI resources
 ├── backend/
-│   └── server.js             # Express server with REST & GraphQL
-├── schema.graphqls           # GraphQL schema
+│ └── server.js # Express server with REST & GraphQL
+├── schema.graphqls # GraphQL schema
 └── README.md
-```
+
+pgsql
+Copy
+Edit
+
+---
 
 ## 🗄 Database Schema
 
@@ -64,16 +84,16 @@ CREATE TABLE individual_products (
     product_name TEXT NOT NULL,
     description TEXT,
     price NUMERIC NOT NULL,
-    image_data TEXT  -- URL string, not base64
+    image_data TEXT
 );
 
 -- Package products
 CREATE TABLE package_products (
     id SERIAL PRIMARY KEY,
     package_name TEXT NOT NULL,
-    items TEXT,  -- YAML format
+    items TEXT,
     price NUMERIC NOT NULL,
-    image_data TEXT  -- URL string, not base64
+    image_data TEXT
 );
 
 -- Resellers
@@ -89,41 +109,63 @@ CREATE TABLE resellers (
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL
 );
-```
+🔌 API Endpoints
+REST API
+GET /api/products/individual
 
-## 🚀 Quick Setup
+GET /api/products/package
 
-### **1. Backend Setup**
-```bash
-# Navigate to backend directory
+GET /api/resellers/limited → (Random 300 resellers)
+
+GET /api/resellers/search?name=...
+
+GET /api/resellers/search?city=...
+
+GraphQL
+POST /graphql
+
+graphql
+Copy
+Edit
+query {
+  limitedResellers {
+    id
+    shop_name
+    ...
+  }
+
+  searchResellersByName(name: "Ayu") {
+    ...
+  }
+
+  searchResellersByCity(city: "Malang") {
+    ...
+  }
+}
+🚀 Quick Setup
+1. Backend Setup
+bash
+Copy
+Edit
 cd Skincare-App/backend
-
-# Install dependencies
 npm install
 
-# Start PostgreSQL server
-# Create database 'skincare_app' with user 'postgres' and password 'password'
+# Ensure PostgreSQL is running
+# Create database: 'skincare_app'
 
-# Start backend server
 node server.js
-```
-
-### **2. Android Setup**
-```bash
-# Open in Android Studio
-# Update database connection in backend/server.js if needed
+2. Android Setup
+bash
+Copy
+Edit
+# Open project in Android Studio
+# Ensure base URLs are correct
 # Build and run the app
-```
-
-### **3. API Endpoints**
-- **REST API**: `http://localhost:4000/api/`
-- **GraphQL**: `http://localhost:4000/graphql`
-
-## 🔧 API Configuration
-
-### **Database Connection**
-Update connection details in `backend/server.js`:
-```javascript
+3. Configuration
+javascript
+Copy
+Edit
+// backend/server.js
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
@@ -131,114 +173,92 @@ const pool = new Pool({
   password: 'password',
   port: 5432,
 });
-```
-
-### **Android Configuration**
-- **REST Base URL**: `http://10.0.2.2:4000/api/`
-- **GraphQL URL**: `http://10.0.2.2:4000/graphql`
-
-## 📊 API Comparison Architecture
-
-### **Layer Consistency**
-Both REST and GraphQL are implemented at the **Repository Layer**:
-
-```kotlin
+kotlin
+Copy
+Edit
+// Android config
+val REST_BASE_URL = "http://10.0.2.2:4000/api/"
+val GRAPHQL_URL = "http://10.0.2.2:4000/graphql"
+📊 API Comparison Architecture
+Layer Design
+kotlin
+Copy
+Edit
 class ProductRepository {
-    private val retrofitService = RetrofitClientProvider.getRetrofitClient()
-    private val apolloClient = ApolloClientProvider.getApolloClient()
-    
-    fun getProducts(apiType: ApiType): Flow<ApiResponse<List<Product>>> = flow {
-        when (apiType) {
-            ApiType.RETROFIT -> { /* REST implementation */ }
-            ApiType.GRAPHQL -> { /* GraphQL implementation */ }
+    val retrofit = RetrofitClientProvider.getRetrofitClient()
+    val apollo = ApolloClientProvider.getApolloClient()
+
+    fun getProducts(api: ApiType): Flow<ApiResponse<List<Product>>> = flow {
+        when (api) {
+            ApiType.RETROFIT -> { /* REST */ }
+            ApiType.GRAPHQL -> { /* GraphQL */ }
         }
     }
 }
-```
+🎯 Usage Guide
+1. Launch the App
+Select API type (REST/GraphQL)
 
-### **Data Consistency**
-- ✅ **Same database**: PostgreSQL for both APIs
-- ✅ **Same data**: Identical product/package/reseller data
-- ✅ **Same layer**: Repository layer implementation
-- ✅ **Same error handling**: Unified ApiResponse sealed class
+2. Test Features
+Product & package listings
 
-## 🎯 Usage Guide
+Reseller map view
 
-### **1. Launch App**
-- Open the app on Android device/emulator
-- Select API type from dropdown (REST/GraphQL)
+3. Try Search & Comparison
+Use province search bar
 
-### **2. Test APIs**
-- **Individual Products**: View single products
-- **Package Products**: View product packages
-- **Resellers**: View reseller locations
+Use Reseller Name / City dropdown search
 
-### **3. Performance Comparison**
-- Both APIs fetch identical data
-- Built-in timing for performance metrics
-- Same error handling for fair comparison
+View map results and details dialog
 
-## 🔍 Troubleshooting
+🔍 Troubleshooting
+Common Issues
+400 Bad Request (GraphQL)
+Check for schema/field mismatch
 
-### **Common Issues**
+Database Not Connecting
+Ensure PostgreSQL is active on port 5432
 
-#### **Error 400 - Bad Request**
-- **Cause**: Field name mismatch between schema and query
-- **Solution**: Ensure field names match exactly:
-    - Schema: `image_data`
-    - Query: `image_data`
-    - Resolver: `image_data`
+Android Emulator Network
+Use 10.0.2.2 instead of localhost
 
-#### **Database Connection**
-- **Check**: PostgreSQL running on port 5432
-- **Verify**: Database 'skincare_app' exists
-- **Test**: Connection with provided credentials
+📦 Contribution Guide
+Fork this repo
 
-#### **Android Emulator**
-- **Use**: `10.0.2.2` instead of `localhost`
-- **Check**: Network permissions in AndroidManifest.xml
+Create a branch: feature/YourFeatureName
 
-### **Debug Steps**
-1. **Test GraphQL directly**:
-   ```bash
-   curl -X POST http://localhost:4000/graphql \
-     -H "Content-Type: application/json" \
-     -d '{"query":"{ packages { id packageName items price image_data } }"}'
-   ```
+Commit your changes
 
-2. **Check server logs**:
-   ```bash
-   node server.js
-   ```
+Push and open a PR
 
-3. **Verify database**:
-   ```sql
-   SELECT * FROM package_products LIMIT 1;
-   ```
+📄 License
+This project is licensed under the MIT License – see the LICENSE file.
 
-## 📝 Contributing
+🎓 Educational Purpose
+This project is built for learning and exploration:
 
-1. **Fork** the repository
-2. **Create** feature branch: `git checkout -b feature/AmazingFeature`
-3. **Commit** changes: `git commit -m 'Add AmazingFeature'`
-4. **Push** to branch: `git push origin feature/AmazingFeature`
-5. **Open** Pull Request
+🔄 REST vs GraphQL side-by-side
 
-## 📄 License
+🧱 MVVM + Repository pattern
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+📱 Modern Android with clean UI
 
-## 🎓 Educational Purpose
+🗃️ PostgreSQL database integration
 
-This project is designed for **educational purposes** to demonstrate:
-- **Fair API comparison** between REST and GraphQL
-- **Clean architecture** implementation
-- **Modern Android development** practices
-- **Database integration** with PostgreSQL
+✅ Update Summary:
 
-### **Key Learning Points**
-- ✅ REST vs GraphQL performance comparison
-- ✅ Repository pattern implementation
-- ✅ MVVM architecture
-- ✅ Database design and integration
-- ✅ Modern Android development stack
+Added endpoints for:
+
+GET /api/resellers/limited
+
+search by reseller name
+
+search by city
+
+Added frontend features for:
+
+Province zoom
+
+Dropdown search type
+
+Search results dialog (up to 50)
