@@ -20,18 +20,19 @@ import com.skincare.apitest.network.RetrofitClientProvider
 import com.skincare.apitest.network.await
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import com.apollographql.apollo3.api.Optional
 
 class ProductRepository {
     private val retrofitService = RetrofitClientProvider.getRetrofitClient()
         .create(ProductService::class.java)
     private val apolloClient = ApolloClientProvider.getApolloClient()
 
-    fun getProducts(apiType: ApiType): Flow<ApiResponse<List<Product>>> = flow {
+    fun getProducts(apiType: ApiType, limit: Int? = null): Flow<ApiResponse<List<Product>>> = flow {
         emit(ApiResponse.Loading)
         try {
             when (apiType) {
                 ApiType.RETROFIT -> {
-                    val response = retrofitService.getProducts()
+                    val response = retrofitService.getProducts(limit)
                     if (response.isSuccessful) {
                         response.body()?.let { productResponse ->
                             emit(ApiResponse.Success(productResponse.products))
@@ -41,7 +42,7 @@ class ProductRepository {
                     }
                 }
                 ApiType.GRAPHQL -> {
-                    val response = apolloClient.query(GetProductsQuery()).execute()
+                    val response = apolloClient.query(GetProductsQuery(limit?.let { Optional.present(it) } ?: Optional.absent())).execute()
                     if (response.hasErrors()) {
                         emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
                     } else {
@@ -232,12 +233,12 @@ class ProductRepository {
     }
 
 
-    fun getPackages(apiType: ApiType): Flow<ApiResponse<List<PackageProduct>>> = flow {
+    fun getPackages(apiType: ApiType, limit: Int? = null): Flow<ApiResponse<List<PackageProduct>>> = flow {
         emit(ApiResponse.Loading)
         try {
             when (apiType) {
                 ApiType.RETROFIT -> {
-                    val response = retrofitService.getPackages()
+                    val response = retrofitService.getPackages(limit)
                     if (response.isSuccessful) {
                         response.body()?.let { packageResponse ->
                             emit(ApiResponse.Success(packageResponse.packages))
@@ -247,7 +248,7 @@ class ProductRepository {
                     }
                 }
                 ApiType.GRAPHQL -> {
-                    val response = apolloClient.query(GetPackagesQuery()).execute()
+                    val response = apolloClient.query(GetPackagesQuery(limit?.let { Optional.present(it) } ?: Optional.absent())).execute()
                     if (response.hasErrors()) {
                         emit(ApiResponse.Error(response.errors?.first()?.message ?: "Unknown GraphQL error"))
                     } else {

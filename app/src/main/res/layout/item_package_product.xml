@@ -1,101 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="2dp"
-    android:background="@android:color/white">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/ripple_effect"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/text_hint"
+    app:strokeWidth="1dp"
+    style="@style/Widget.SkincareApp.Card">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp"
-        android:gravity="center_horizontal">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/packageImageView"
-            android:layout_width="375dp"
-            android:layout_height="375dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@android:color/darker_gray"
-            android:clipToOutline="true"
-            android:contentDescription="@string/package_image"
-            android:outlineProvider="background"
-            android:scaleType="centerCrop" />
+        <!-- Package Image Container -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@drawable/gradient_background">
 
-        <TextView
-            android:id="@+id/packageNameTextView"
+            <ImageView
+                android:id="@+id/packageImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/package_image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_foreground"
+                tools:src="@drawable/ic_launcher_foreground" />
+
+            <!-- Bundle Badge -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bundle_badge_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="BUNDLE"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Overline"
+                android:textColor="@color/secondary" />
+
+        </FrameLayout>
+
+        <!-- Package Details -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="8dp"
-            android:text="Package Name"
-            android:ellipsize="end"
-            android:maxLines="1" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/packagePriceTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="@android:color/holo_green_dark"
-            android:text="Rp 0"
-            android:layout_marginTop="8dp"
-            android:gravity="center_horizontal" />
+            <!-- Package Name -->
+            <TextView
+                android:id="@+id/packageNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Headline6"
+                android:textColor="@color/text_primary"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Complete Skincare Set" />
 
-        <TextView
-            android:id="@+id/productsLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Products"
-            android:textAppearance="?attr/textAppearanceSubtitle2"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_horizontal" />
+            <!-- Package Price -->
+            <TextView
+                android:id="@+id/packagePriceTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Headline5"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                tools:text="Rp 450.000" />
 
-        <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:spinnerMode="dropdown"
-            android:layout_marginBottom="12dp" />
+            <!-- Products Label -->
+            <TextView
+                android:id="@+id/productsLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Products (Max 3)"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Subtitle2"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:textStyle="bold" />
 
-        <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:spinnerMode="dropdown"
-            android:layout_marginBottom="12dp" />
+            <!-- Spinner Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/spinner_container_background"
+                android:padding="12dp">
 
-        <Spinner
-            android:id="@+id/spinner3"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:spinnerMode="dropdown" />
+                <!-- Spinner 1 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Product 1"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <ImageButton
-            android:id="@+id/cartButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/add_to_cart"
-            android:src="@android:drawable/ic_menu_add"
-            android:layout_marginTop="16dp" />
+                    <AutoCompleteTextView
+                        android:id="@+id/spinner1"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:inputType="none"
+                        android:clickable="true"
+                        android:focusable="true" />
 
-            <ImageButton
-                android:id="@+id/deleteButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/delete"
-                android:src="@android:drawable/ic_menu_delete"
-                android:visibility="gone" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Spinner 2 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Product 2"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinner2"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:inputType="none"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Spinner 3 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Product 3"
+                    app:boxCornerRadiusTopStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinner3"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:inputType="none"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Add to Cart Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartButton"
+                    style="@style/Widget.SkincareApp.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="@string/add_to_cart"
+                    android:textAppearance="@style/TextAppearance.SkincareApp.Button"
+                    app:icon="@drawable/ic_shopping_cart"
+                    app:iconGravity="textStart" />
+
+                <!-- Delete Button (for cart) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteButton"
+                    style="@style/Widget.SkincareApp.Button.Outlined"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_menu_delete"
+                    app:iconGravity="textStart"
+                    app:strokeColor="@color/error" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

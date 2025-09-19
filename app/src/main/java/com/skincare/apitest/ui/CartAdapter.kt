@@ -38,7 +38,7 @@ class CartAdapter(
                     onDeleteClick(getItem(position))
                 }
             }
-            binding.productItemLayout.setOnClickListener {
+            binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick(getItem(position))
@@ -48,22 +48,21 @@ class CartAdapter(
 
         fun bind(product: Product) {
             binding.apply {
-                productNameTextView.text = product.productName
-                productDescriptionTextView.text = product.description
-                productPriceTextView.text = product.getFormattedPrice()
+                productName.text = product.productName
+                productDescription.text = product.description
+                productPrice.text = product.getFormattedPrice()
 
                 // Load image if available
                 product.imageData?.let { imageUrl ->
-                    Glide.with(productImageView)
+                    Glide.with(productImage)
                         .load(imageUrl)
                         .centerCrop()
-                        .into(productImageView)
+                        .into(productImage)
                 }
-
 
                 // Show delete button and hide cart button in cart list
                 deleteButton.visibility = android.view.View.VISIBLE
-                cartButton.visibility = android.view.View.GONE
+                addToCartButton.visibility = android.view.View.GONE
             }
         }
     }

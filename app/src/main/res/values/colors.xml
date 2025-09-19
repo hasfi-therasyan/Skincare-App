@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#FF6200EE</color>
-    <color name="primary_variant">#FF3700B3</color>
-    <color name="secondary">#FF03DAC5</color>
-    <color name="secondary_variant">#FF018786</color>
+    <!-- Primary Brand Colors - Elegant Skincare Theme -->
+    <color name="primary">#2C5F2D</color> <!-- Deep Forest Green -->
+    <color name="primary_dark">#1B4F1C</color> <!-- Darker Green -->
+    <color name="primary_variant">#4A7C59</color> <!-- Sage Green -->
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#F8BBD9</color> <!-- Soft Pink -->
+    <color name="secondary_variant">#E1BEE7</color> <!-- Lavender -->
+    <color name="accent">#FFD700</color> <!-- Gold Accent -->
+    
+    <!-- Neutral Colors -->
+    <color name="background">#FAFAFA</color> <!-- Off White -->
+    <color name="surface">#FFFFFF</color> <!-- Pure White -->
+    <color name="card_background">#FFFFFF</color> <!-- Card White -->
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color> <!-- Dark Gray -->
+    <color name="text_secondary">#757575</color> <!-- Medium Gray -->
+    <color name="text_hint">#BDBDBD</color> <!-- Light Gray -->
+    
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color> <!-- Green -->
+    <color name="warning">#FF9800</color> <!-- Orange -->
+    <color name="error">#F44336</color> <!-- Red -->
+    <color name="on_error">#FFFFFF</color> <!-- White on Error -->
+    <color name="info">#2196F3</color> <!-- Blue -->
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#2C5F2D</color> <!-- Primary -->
+    <color name="gradient_end">#4A7C59</color> <!-- Primary Variant -->
+    <color name="gradient_accent_start">#F8BBD9</color> <!-- Secondary -->
+    <color name="gradient_accent_end">#E1BEE7</color> <!-- Secondary Variant -->
+    
+    <!-- Legacy Colors (for compatibility) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background">#FFFAFAFA</color>
-    <color name="surface">#FFFFFFFF</color>
-    <color name="error">#FFB00020</color>
-    <color name="on_primary">#FFFFFFFF</color>
-    <color name="on_secondary">#FF000000</color>
-    <color name="on_background">#FF000000</color>
-    <color name="on_surface">#FF000000</color>
-    <color name="on_error">#FFFFFFFF</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
 </resources>

@@ -4,50 +4,167 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
+    <!-- Gradient Header -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        android:background="@drawable/gradient_background"
+        android:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:title="@string/app_name"
-            app:titleTextColor="@android:color/white" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabIndicatorColor="@android:color/white"
-            app:tabSelectedTextColor="@android:color/white"
-            app:tabTextColor="@android:color/darker_gray" />
+            android:background="@android:color/transparent"
+            app:title="Glow &amp; Grace"
+            app:titleTextAppearance="@style/TextAppearance.SkincareApp.Headline5"
+            app:titleTextColor="@color/white"
+            app:subtitle="Premium Skincare Collection"
+            app:subtitleTextAppearance="@style/TextAppearance.SkincareApp.Caption"
+            app:subtitleTextColor="@color/white"
+            app:elevation="0dp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <!-- Main Content -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <ProgressBar
+    <!-- Action Buttons Container -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <!-- Performance Test Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/performanceTestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:contentDescription="Performance Test"
+            app:fabSize="mini"
+            app:backgroundTint="@color/primary"
+            app:tint="@color/white" />
+
+        <!-- Reseller Map Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/resellerMapButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/reseller"
+            android:contentDescription="Reseller Map"
+            app:fabSize="mini"
+            app:backgroundTint="@color/secondary"
+            app:tint="@color/white" />
+
+        <!-- Cart Button with Badge -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/cartButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_shopping_cart"
+                android:contentDescription="Cart"
+                app:fabSize="normal"
+                app:backgroundTint="@color/accent"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/cartBadge"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/badge_background"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="0" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Navigation with modern styling -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        app:itemIconTint="@color/purple_200"
+        app:itemTextColor="@color/purple_200"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_navigation_menu" />
+
+    <!-- Loading Indicator -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:visibility="gone" />
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/purple_200"
+        app:trackColor="@color/text_hint" />
 
-    <TextView
-        android:id="@+id/errorTextView"
-        android:layout_width="wrap_content"
+    <!-- Error Message -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/errorCard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textAppearance="?attr/textAppearanceBody1"
-        android:visibility="gone" />
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/error"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/errorTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Network Error"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Body1"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/retryButton"
+                style="@style/Widget.SkincareApp.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="Retry"
+                app:strokeColor="@color/white" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

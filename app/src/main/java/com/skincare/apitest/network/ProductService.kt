@@ -17,13 +17,13 @@ import com.skincare.apitest.model.PackageProductResponse
 
 interface ProductService {
     @GET("products")
-    suspend fun getProducts(): Response<ProductResponse>
+    suspend fun getProducts(@retrofit2.http.Query("limit") limit: Int? = null): Response<ProductResponse>
 
     @GET("product/image/{id}")
     suspend fun getProductImage(@Path("id") id: Int): Response<String>
 
     @GET("packages")
-    suspend fun getPackages(): Response<PackageProductResponse>
+    suspend fun getPackages(@retrofit2.http.Query("limit") limit: Int? = null): Response<PackageProductResponse>
 
     @GET("resellers")
     suspend fun getResellers(): Response<ResellerResponse>

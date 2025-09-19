@@ -58,6 +58,10 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     private lateinit var viewModel: ProductViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    // Store current search parameters
+    private var currentSearchType: String = "Reseller Name"
+    private var currentSearchQuery: String = ""
+
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -88,6 +92,7 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
 
         setupSearchSpinner()
         setupSearchFunctionality()
+        setupSearchResultsObserver()
 
         loadLimitedResellers()
     }
@@ -198,24 +203,30 @@ class ResellerMapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         }
     }
 
-    private fun performSearch(query: String, searchType: String) {
+    private fun setupSearchResultsObserver() {
         lifecycleScope.launch {
-            when (searchType) {
-                "Reseller Name" -> viewModel.searchResellersByName(query)
-                "City" -> viewModel.searchResellersByCity(query)
-            }
-
             viewModel.searchResultsState.collect { response ->
                 when (response) {
                     is ApiResponse.Loading -> {}
                     is ApiResponse.Success -> {
-                        showSearchResultsDialog(response.data, searchType, query)
+                        showSearchResultsDialog(response.data, currentSearchType, currentSearchQuery)
                     }
                     is ApiResponse.Error -> {
                         Toast.makeText(this@ResellerMapActivity, "Search failed: ${response.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+        }
+    }
+
+    private fun performSearch(query: String, searchType: String) {
+        // Store current search parameters
+        currentSearchType = searchType
+        currentSearchQuery = query
+        
+        when (searchType) {
+            "Reseller Name" -> viewModel.searchResellersByName(query)
+            "City" -> viewModel.searchResellersByCity(query)
         }
     }
 

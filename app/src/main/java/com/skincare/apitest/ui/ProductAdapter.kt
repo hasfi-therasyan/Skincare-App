@@ -38,7 +38,7 @@ class ProductAdapter(
                     onItemClick(getItem(position))
                 }
             }
-            binding.cartButton.setOnClickListener {
+            binding.addToCartButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onCartClick(getItem(position))
@@ -48,16 +48,16 @@ class ProductAdapter(
 
         fun bind(product: Product) {
             binding.apply {
-                productNameTextView.text = product.productName
-                productDescriptionTextView.text = product.description
-                productPriceTextView.text = product.getFormattedPrice()
+                productName.text = product.productName
+                productDescription.text = product.description
+                productPrice.text = product.getFormattedPrice()
 
                 // Load image if available
                 product.imageData?.let { imageUrl ->
-                    Glide.with(productImageView)
+                    Glide.with(productImage)
                         .load(imageUrl)
                         .centerCrop()
-                        .into(productImageView)
+                        .into(productImage)
                 }
             }
         }

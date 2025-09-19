@@ -5,13 +5,20 @@
     <item
         android:id="@+id/action_cart"
         android:icon="@drawable/ic_shopping_cart"
-        android:title="@string/cart"
-        app:showAsAction="always"
-        app:actionLayout="@layout/cart_action_view" />
+        android:title="Cart"
+        app:actionLayout="@layout/cart_action_view"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_reseller_map"
         android:icon="@drawable/reseller"
-        android:title="@string/reseller"
-        app:showAsAction="always" />
+        android:title="Reseller Map"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_performance_test"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Performance Test"
+        app:showAsAction="never" />
+
 </menu>

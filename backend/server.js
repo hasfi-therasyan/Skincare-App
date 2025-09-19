@@ -27,7 +27,16 @@ app.use(express.json());
 // REST API endpoint to get individual products
 app.get('/api/products', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, product_name, description, price, image_data FROM individual_products');
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    let query = 'SELECT id, product_name, description, price, image_data FROM individual_products';
+    let params = [];
+    
+    if (limit) {
+      query += ' LIMIT $1';
+      params.push(limit);
+    }
+    
+    const result = await pool.query(query, params);
     const products = result.rows.map(row => ({
       id: row.id,
       product_name: row.product_name,
@@ -45,7 +54,16 @@ app.get('/api/products', async (req, res) => {
 // REST API endpoint to get package products
 app.get('/api/packages', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, package_name, items, price, image_data FROM package_products');
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    let query = 'SELECT id, package_name, items, price, image_data FROM package_products';
+    let params = [];
+    
+    if (limit) {
+      query += ' LIMIT $1';
+      params.push(limit);
+    }
+    
+    const result = await pool.query(query, params);
     const packages = result.rows.map(row => {
       let items = yaml.load(row.items);
       if (!Array.isArray(items)) {
@@ -225,9 +243,17 @@ function distributeResellersEvenly(resellers, limit) {
  // GraphQL resolvers
  const resolvers = {
    Query: {
-     products: async () => {
+     products: async (_, { limit }) => {
        try {
-         const result = await pool.query('SELECT id, product_name, description, price, image_data FROM individual_products');
+         let query = 'SELECT id, product_name, description, price, image_data FROM individual_products';
+         let params = [];
+         
+         if (limit) {
+           query += ' LIMIT $1';
+           params.push(limit);
+         }
+         
+         const result = await pool.query(query, params);
          return result.rows.map(row => ({
            id: row.id.toString(),
            product_name: row.product_name,
@@ -240,9 +266,17 @@ function distributeResellersEvenly(resellers, limit) {
          throw new Error('Failed to fetch products');
        }
      },
-     packages: async () => {
+     packages: async (_, { limit }) => {
        try {
-         const result = await pool.query('SELECT id, package_name, items, price, image_data FROM package_products');
+         let query = 'SELECT id, package_name, items, price, image_data FROM package_products';
+         let params = [];
+         
+         if (limit) {
+           query += ' LIMIT $1';
+           params.push(limit);
+         }
+         
+         const result = await pool.query(query, params);
          return result.rows.map(row => {
            let items = yaml.load(row.items);
            if (!Array.isArray(items)) {

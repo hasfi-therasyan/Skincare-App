@@ -1,6 +1,6 @@
 type Query {
-  products: [Product!]!
-  packages: [Package!]!
+  products(limit: Int): [Product!]!
+  packages(limit: Int): [Package!]!
   resellers: [Reseller!]!
   limitedResellers: [Reseller!]!
   searchResellersByName(query: String!): [Reseller!]!

@@ -63,7 +63,7 @@ class CombinedCartAdapter(
                     }
                 }
             }
-            binding.productItemLayout.setOnClickListener {
+            binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val item = getItem(position)
@@ -76,19 +76,19 @@ class CombinedCartAdapter(
 
         fun bind(product: Product) {
             binding.apply {
-                productNameTextView.text = product.productName
-                productDescriptionTextView.text = product.description
-                productPriceTextView.text = product.getFormattedPrice()
+                productName.text = product.productName
+                productDescription.text = product.description
+                productPrice.text = product.getFormattedPrice()
 
                 product.imageData?.let { imageUrl ->
-                    Glide.with(productImageView)
-                        .load(imageUrl) // Changed to load image URL directly
+                    Glide.with(productImage)
+                        .load(imageUrl)
                         .centerCrop()
-                        .into(productImageView)
+                        .into(productImage)
                 }
 
-                // deleteButton.visibility = android.view.View.VISIBLE
-                cartButton.visibility = android.view.View.GONE
+                // Hide cart button in cart list
+                addToCartButton.visibility = android.view.View.GONE
             }
         }
     }
@@ -122,55 +122,30 @@ class CombinedCartAdapter(
         fun bind(customPackageProduct: CustomPackageProduct) {
             binding.apply {
                 packageNameTextView.text = customPackageProduct.packageName
-
-                // Setup spinners to show selected items and available items
-                val itemsList = customPackageProduct.basePackage.items.flatMap { item -> item.split(",").map { it.trim() } }
-                val spinners = listOf(spinner1, spinner2, spinner3)
-                val selectedItemsLocal = customPackageProduct.selectedItems.toMutableList()
-
-                spinners.forEachIndexed { index, spinner ->
-                    val filteredItems = itemsList.filter { item ->
-                        val selectedIndex = selectedItemsLocal.indexOf(item)
-                        selectedIndex == -1 || selectedIndex == index
-                    }
-
-                    val adapter = android.widget.ArrayAdapter<String>(
-                        binding.root.context,
-                        android.R.layout.simple_spinner_item,
-                        filteredItems
-                    )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinner.adapter = adapter
-
-                    val selectedItem = selectedItemsLocal.getOrNull(index) ?: filteredItems.getOrNull(0) ?: ""
-                    val selectionIndex = filteredItems.indexOf(selectedItem).takeIf { it >= 0 } ?: 0
-                    spinner.setSelection(selectionIndex)
-
-                    spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            parent: android.widget.AdapterView<*>,
-                            view: android.view.View?,
-                            position: Int,
-                            id: Long
-                        ) {
-                            val newItem = adapter.getItem(position) ?: ""
-                            if (selectedItemsLocal[index] != newItem) {
-                                selectedItemsLocal[index] = newItem
-                                // Update the selectedItems in the customPackageProduct if needed
-                                // Notify adapter or update UI accordingly
-                            }
-                        }
-
-                        override fun onNothingSelected(parent: android.widget.AdapterView<*>) {
-                            // Do nothing
-                        }
-                    }
-
-                    spinner.isEnabled = true
-                    spinner.isClickable = true
-                }
-
                 packagePriceTextView.text = customPackageProduct.getFormattedPrice()
+
+                // Hide the spinners in cart view
+                spinner1.visibility = android.view.View.GONE
+                spinner2.visibility = android.view.View.GONE
+                spinner3.visibility = android.view.View.GONE
+                
+                // Hide the TextInputLayout containers
+                val spinner1Container = spinner1.parent as? android.view.ViewGroup
+                val spinner2Container = spinner2.parent as? android.view.ViewGroup
+                val spinner3Container = spinner3.parent as? android.view.ViewGroup
+                
+                spinner1Container?.visibility = android.view.View.GONE
+                spinner2Container?.visibility = android.view.View.GONE
+                spinner3Container?.visibility = android.view.View.GONE
+                
+                // Show selected items in a clear format
+                productsLabel.visibility = android.view.View.VISIBLE
+                if (customPackageProduct.selectedItems.isNotEmpty()) {
+                    val selectedItemsText = customPackageProduct.selectedItems.joinToString(" • ")
+                    productsLabel.text = "Selected Items:\n$selectedItemsText"
+                } else {
+                    productsLabel.text = "No items selected"
+                }
 
                 customPackageProduct.imageData?.let { imageUrl ->
                     Glide.with(packageImageView)

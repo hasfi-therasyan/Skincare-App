@@ -14,6 +14,7 @@ import com.skincare.apitest.model.PackageProduct
 import com.skincare.apitest.model.Reseller
 import com.skincare.apitest.repository.CartRepository
 import com.skincare.apitest.repository.CartItem
+import com.skincare.apitest.model.CustomPackageProduct
 
 class ProductViewModel : ViewModel() {
     private val repository = ProductRepository()
@@ -105,8 +106,12 @@ class ProductViewModel : ViewModel() {
         CartRepository.addToCart(product)
     }
 
-    fun addPackageToCart(packageProduct: PackageProduct, selectedItems: List<String>) {
-        CartRepository.addPackageToCart(packageProduct, selectedItems)
+    fun addPackageToCart(packageProduct: PackageProduct) {
+        CartRepository.addPackageToCart(packageProduct)
+    }
+
+    fun addCustomPackageToCart(customPackageProduct: CustomPackageProduct) {
+        CartRepository.addCustomPackageToCart(customPackageProduct)
     }
 
     fun removePackageFromCart(packageProduct: PackageProduct) {

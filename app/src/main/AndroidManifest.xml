@@ -2,11 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Required permissions -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" 
+        tools:ignore="ScopedStorage" />
+    
+    <!-- Google Maps Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -19,23 +24,43 @@
         android:theme="@style/Theme.SkincareApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        
+        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBtL8IR34xuhygPdqkNrc27n9j6Tslbib4" />
-
+        
         <activity
             android:name=".ApiSelectionActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.SkincareApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name=".MainActivity"
-            android:exported="true"/>
-        <activity android:name=".CartActivity" android:exported="false"/>
-        <activity android:name=".ui.ResellerMapActivity" android:exported="false"/>
+            android:exported="false"
+            android:theme="@style/Theme.SkincareApp" />
+            
+        <activity
+            android:name=".CartActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SkincareApp" />
+            
+        <activity
+            android:name=".ui.ResellerMapActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SkincareApp" />
+            
+        <activity
+            android:name=".performance.PerformanceTestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SkincareApp"
+            android:label="Performance Test Suite" />
+            
     </application>
+
 </manifest>

@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.skincare.apitest.databinding.ActivityCartBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import android.widget.TextView
 import com.skincare.apitest.model.Product
 import com.skincare.apitest.ui.CartAdapter
 import com.skincare.apitest.ui.ProductDetailDialogFragment
@@ -19,25 +23,37 @@ import com.skincare.apitest.ui.CombinedCartAdapter
 
 class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCartClickListener {
 
-    private lateinit var binding: ActivityCartBinding
     private lateinit var viewModel: ProductViewModel
     private lateinit var cartAdapter: CartAdapter
     private lateinit var cartPackageAdapter: CartPackageAdapter
+    
+    // UI Components
+    private lateinit var cartRecyclerView: RecyclerView
+    private lateinit var totalPriceTextView: TextView
+    private lateinit var checkoutButton: MaterialButton
+    private lateinit var cartToolbar: MaterialToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCartBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_cart)
+
+        // Initialize UI components
+        cartRecyclerView = findViewById(R.id.cartRecyclerView)
+        totalPriceTextView = findViewById(R.id.totalPriceTextView)
+        checkoutButton = findViewById(R.id.checkoutButton)
+        cartToolbar = findViewById(R.id.cartToolbar)
 
         viewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
 
+        // Setup toolbar
+        setSupportActionBar(cartToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.cart)
+        supportActionBar?.title = "Shopping Cart"
 
         setupRecyclerView()
         observeCartItems()
 
-        binding.checkoutButton.setOnClickListener {
+        checkoutButton.setOnClickListener {
             android.widget.Toast.makeText(this, "Checkout clicked", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
@@ -59,7 +75,7 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
                 // TODO: Implement package product detail dialog if needed
             }
         )
-        binding.cartRecyclerView.apply {
+        cartRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@CartActivity)
             adapter = combinedCartAdapter
         }
@@ -68,7 +84,7 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
     private fun observeCartItems() {
         lifecycleScope.launch {
             viewModel.cartItems.collectLatest { cartItems ->
-                val combinedCartAdapter = binding.cartRecyclerView.adapter as CombinedCartAdapter
+                val combinedCartAdapter = cartRecyclerView.adapter as CombinedCartAdapter
                 combinedCartAdapter.submitList(cartItems)
 
                 // Calculate total price including both product types
@@ -79,7 +95,7 @@ class CartActivity : AppCompatActivity(), ProductDetailDialogFragment.OnAddToCar
                     }
                 }
                 val formattedTotal = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("in", "ID")).format(totalPrice.toDouble())
-                binding.totalPriceTextView.text = "Total: $formattedTotal"
+                totalPriceTextView.text = "Total: $formattedTotal"
             }
         }
     }

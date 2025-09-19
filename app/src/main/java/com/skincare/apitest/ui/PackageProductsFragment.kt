@@ -13,6 +13,7 @@ import com.skincare.apitest.databinding.FragmentIndividualProductsBinding
 import com.skincare.apitest.model.ApiResponse
 import com.skincare.apitest.model.ApiType
 import com.skincare.apitest.model.PackageProduct
+import com.skincare.apitest.model.CustomPackageProduct
 import com.skincare.apitest.viewmodel.ProductViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -48,12 +49,32 @@ class PackageProductsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         packageProductAdapter = PackageProductAdapter(
-            onItemClick = { packageProduct ->
-                // TODO: Implement package product detail dialog if needed
-            },
             onCartClick = { packageProduct, selectedItems ->
-                // Adapt viewModel method to accept selectedItems if needed
-                viewModel.addPackageToCart(packageProduct, selectedItems)
+                if (selectedItems.isNotEmpty()) {
+                    // Create custom package product with selected items
+                    val customPackageProduct = CustomPackageProduct(
+                        basePackage = packageProduct,
+                        selectedItems = selectedItems
+                    )
+                    
+                    // Add custom package to cart
+                    viewModel.addCustomPackageToCart(customPackageProduct)
+                    
+                    // Show feedback to user
+                    val itemsList = selectedItems.joinToString(", ")
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        "Added to cart: $itemsList",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    // Show message to select at least one item
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        "Please select at least one item",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         )
         binding.productsRecyclerView.apply {

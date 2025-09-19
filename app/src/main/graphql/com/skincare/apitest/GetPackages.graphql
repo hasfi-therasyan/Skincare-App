@@ -1,5 +1,5 @@
-query GetPackages {
-  packages {
+query GetPackages($limit: Int) {
+  packages(limit: $limit) {
     id
     packageName
     items

@@ -25,10 +25,19 @@ object CartRepository {
         (cartItemCount as MutableStateFlow).value = currentList.size
     }
 
-    fun addPackageToCart(packageProduct: PackageProduct, selectedItems: List<String>) {
+    fun addPackageToCart(packageProduct: PackageProduct) {
         val currentList = _cartItems.value.toMutableList()
-        val customPackage = CustomPackageProduct(packageProduct, selectedItems)
+        // Use all items from the package
+        val allItems = packageProduct.items.flatMap { it.split(",").map { it.trim() } }
+        val customPackage = CustomPackageProduct(packageProduct, allItems)
         currentList.add(CartItem.PackageProductItem(customPackage))
+        _cartItems.value = currentList
+        (cartItemCount as MutableStateFlow).value = currentList.size
+    }
+
+    fun addCustomPackageToCart(customPackageProduct: CustomPackageProduct) {
+        val currentList = _cartItems.value.toMutableList()
+        currentList.add(CartItem.PackageProductItem(customPackageProduct))
         _cartItems.value = currentList
         (cartItemCount as MutableStateFlow).value = currentList.size
     }

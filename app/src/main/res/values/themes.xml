@@ -1,41 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.SkincareApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.SkincareApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand colors. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_variant</item>
-        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
         
-        <!-- Secondary brand color. -->
+        <!-- Secondary brand colors. -->
         <item name="colorSecondary">@color/secondary</item>
         <item name="colorSecondaryVariant">@color/secondary_variant</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorOnSecondary">@color/text_primary</item>
         
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
         
         <!-- Background colors -->
         <item name="android:colorBackground">@color/background</item>
         <item name="colorSurface">@color/surface</item>
-        <item name="colorOnBackground">@color/on_background</item>
-        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
         
-        <!-- Error colors -->
-        <item name="colorError">@color/error</item>
-        <item name="colorOnError">@color/on_error</item>
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_hint</item>
         
-        <!-- Customize your theme here. -->
-        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
+        <!-- Card and elevation -->
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="elevationOverlayEnabled">false</item>
+        
+        <!-- Custom attributes -->
+        <item name="colorAccent">@color/accent</item>
+        
+        <!-- Typography -->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.SkincareApp.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.SkincareApp.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.SkincareApp.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.SkincareApp.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.SkincareApp.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.SkincareApp.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.SkincareApp.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.SkincareApp.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.SkincareApp.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.SkincareApp.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.SkincareApp.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.SkincareApp.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.SkincareApp.Overline</item>
     </style>
-
-    <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Card</item>
+    
+    <!-- Typography Styles -->
+    <style name="TextAppearance.SkincareApp.Headline1" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Headline2" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Headline3" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Headline4" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Headline5" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Headline6" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Subtitle1" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Subtitle2" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Body1" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Body2" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Button" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="TextAppearance.SkincareApp.Overline" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    
+    <!-- Custom Component Styles -->
+    <style name="Widget.SkincareApp.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/card_background</item>
         <item name="cardElevation">4dp</item>
-        <item name="cardCornerRadius">8dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardUseCompatPadding">true</item>
     </style>
-
-    <style name="ThemeOverlay.App.Card" parent="">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorSurface">@color/surface</item>
+    
+    <style name="Widget.SkincareApp.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textAppearance">@style/TextAppearance.SkincareApp.Button</item>
+        <item name="backgroundTint">@color/purple_200</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+    </style>
+    
+    <style name="Widget.SkincareApp.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.SkincareApp.Button</item>
+        <item name="strokeColor">@color/purple_200</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+    </style>
+    
+    <style name="Widget.SkincareApp.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="tint">@color/white</item>
+        <item name="borderWidth">0dp</item>
     </style>
 </resources>

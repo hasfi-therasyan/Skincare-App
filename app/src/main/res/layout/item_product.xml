@@ -4,88 +4,136 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/ripple_effect"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/text_hint"
+    app:strokeWidth="1dp"
+    style="@style/Widget.SkincareApp.Card">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/productItemLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/productImageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@string/product_image"
-            android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars"/>
+        <!-- Product Image Container -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/gradient_background">
 
-        <TextView
-            android:id="@+id/productNameTextView"
-            android:layout_width="0dp"
+            <ImageView
+                android:id="@+id/productImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/product_image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_foreground"
+                tools:src="@drawable/ic_launcher_foreground" />
+
+            <!-- Premium Badge -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/premium_badge_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="PREMIUM"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Overline"
+                android:textColor="@color/accent" />
+
+        </FrameLayout>
+
+        <!-- Product Details -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/cartButton"
-            app:layout_constraintStart_toEndOf="@id/productImageView"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Product Name"/>
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/productDescriptionTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textAppearance="?attr/textAppearanceBody2"
-            app:layout_constraintEnd_toStartOf="@+id/cartButton"
-            app:layout_constraintStart_toEndOf="@id/productImageView"
-            app:layout_constraintTop_toBottomOf="@id/productNameTextView"
-            tools:text="Product description goes here. This can be a longer text that describes the product in detail."/>
+            <!-- Product Name -->
+            <TextView
+                android:id="@+id/productName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Headline6"
+                android:textColor="@color/text_primary"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Hydrating Facial Serum" />
 
-        <TextView
-            android:id="@+id/productPriceTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="@color/design_default_color_primary"
-            app:layout_constraintStart_toEndOf="@id/productImageView"
-            app:layout_constraintTop_toBottomOf="@id/productDescriptionTextView"
-            tools:text="$99.99"/>
+            <!-- Product Description -->
+            <TextView
+                android:id="@+id/productDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="@style/TextAppearance.SkincareApp.Body2"
+                android:textColor="@color/text_secondary"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Deeply hydrating serum with hyaluronic acid for radiant, plump skin" />
 
-        <ImageButton
-            android:id="@+id/cartButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/add_to_cart"
-            android:src="@android:drawable/ic_menu_add"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            <!-- Price and Action Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-        <ImageButton
-            android:id="@+id/deleteButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete"
-            android:src="@android:drawable/ic_menu_delete"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+                <!-- Price -->
+                <TextView
+                    android:id="@+id/productPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.SkincareApp.Headline5"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    tools:text="Rp 250.000" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Add to Cart Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addToCartButton"
+                    style="@style/Widget.SkincareApp.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/add_to_cart"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_shopping_cart"
+                    app:iconSize="16dp"
+                    app:iconGravity="textStart" />
+
+                <!-- Delete Button (for cart) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteButton"
+                    style="@style/Widget.SkincareApp.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:text="Delete"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_menu_delete"
+                    app:iconSize="16dp"
+                    app:iconGravity="textStart"
+                    app:strokeColor="@color/error" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

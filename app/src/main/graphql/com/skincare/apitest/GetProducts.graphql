@@ -1,5 +1,5 @@
-query GetProducts {
-  products {
+query GetProducts($limit: Int) {
+  products(limit: $limit) {
     id
     product_name
     description
