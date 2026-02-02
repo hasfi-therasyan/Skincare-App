@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 const cors = require('cors');
@@ -8,11 +9,11 @@ const yaml = require('js-yaml');
 
 // PostgreSQL connection pool
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'skincare_app',
-  password: 'password',
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT) || 5432,
 });
 
 // Load GraphQL schema from schema.graphqls file
