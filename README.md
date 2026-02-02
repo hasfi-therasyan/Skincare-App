@@ -168,16 +168,16 @@ node server.js
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'skincare_app',
-  password: 'password',
-  port: 5432,
+  database: 'ur_database_name',
+  password: 'ur_password',
+  port: ur port,
 });
 ```
 
 ```kotlin
 // Android config
-val REST_BASE_URL = "http://10.0.2.2:4000/api/"
-val GRAPHQL_URL = "http://10.0.2.2:4000/graphql"
+val REST_BASE_URL = "REST_BASE_URL"
+val GRAPHQL_URL = "GRAPHQL_URL"
 ```
 
 ---
@@ -225,10 +225,7 @@ class ProductRepository {
 - Check for schema/field mismatch
 
 #### Database Not Connecting
-- Ensure PostgreSQL is active on port `5432`
-
-#### Android Emulator Network
-- Use `10.0.2.2` instead of `localhost`
+- Ensure PostgreSQL is active on port `ur own port`
 
 ---
 
